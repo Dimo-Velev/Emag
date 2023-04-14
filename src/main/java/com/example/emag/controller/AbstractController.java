@@ -1,4 +1,8 @@
 package com.example.emag.controller;
 
-public class AbstractController {
+
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public abstract class AbstractController {
 }
