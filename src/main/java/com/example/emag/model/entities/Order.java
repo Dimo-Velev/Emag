@@ -26,7 +26,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
-    private Status status;
+    private OrderStatus status;
 
     @ManyToOne
     @JoinColumn(name = "payment_type_id", nullable = false)

@@ -19,7 +19,7 @@ public class Card {
     private LocalDate expireDate;
 
     @Column
-    private String cvv2Cvc2Code; //TODO change name
+    private String cvvCode;
 
     @Column
     private Integer userId;}
