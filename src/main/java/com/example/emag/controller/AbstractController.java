@@ -44,6 +44,15 @@ public abstract class AbstractController {
         return generateErrorDTO(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    private ErrorDTO generateErrorDTO(Exception e, HttpStatus s){
+        return ErrorDTO.builder()
+                .msg(e.getMessage())
+                .time(LocalDateTime.now())
+                .status(s.value())
+                .build();
+    }
+
+
     protected int getLoggedId(HttpSession s) {
         isLogged(s);
         return (int) s.getAttribute("LOGGED_ID");
@@ -74,4 +83,6 @@ public abstract class AbstractController {
                 .status(status.value())
                 .build();
     }
+
+
 }
