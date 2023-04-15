@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestController
 public abstract class AbstractController {
 
@@ -42,6 +43,15 @@ public abstract class AbstractController {
     public ErrorDTO handleRest(Exception e) {
         return generateErrorDTO(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    private ErrorDTO generateErrorDTO(Exception e, HttpStatus s){
+        return ErrorDTO.builder()
+                .msg(e.getMessage())
+                .time(LocalDateTime.now())
+                .status(s.value())
+                .build();
+    }
+
 
     protected int getLoggedId(HttpSession s) {
         isLogged(s);
@@ -73,7 +83,6 @@ public abstract class AbstractController {
                 .status(status.value())
                 .build();
     }
-
     protected boolean isLoggedAdmin(HttpSession session){
         //TODO
         isLogged(session);

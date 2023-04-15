@@ -2,12 +2,13 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.*;
 import com.example.emag.model.entities.User;
-import org.modelmapper.ModelMapper;
+import com.example.emag.model.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.example.emag.model.exceptions.*;
+import com.example.emag.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -15,22 +16,17 @@ public class UserService extends AbstractService{
 
     @Autowired
     private BCryptPasswordEncoder encoder;
-    @Autowired
-    private ModelMapper mapper;
-
 
     public UserWithoutPassDTO register(RegisterDTO dto) {
         if(!dto.getPassword().equals(dto.getConfirmPassword())){
             throw new BadRequestException("Passwords mismatch!");
         }
-//        if(!dto.getPassword().matches()){
-//            throw new BadRequestException("Weak password!");
-//        }//TODO check why this is here
         if(userRepository.existsByEmail(dto.getEmail())){
             throw new BadRequestException("Email already exists!");
         }
         User u = mapper.map(dto, User.class);
         u.setPassword(encoder.encode(u.getPassword()));
+        u.setCreatedAt(LocalDateTime.now());
         userRepository.save(u);
         return mapper.map(u, UserWithoutPassDTO.class);
     }
@@ -80,10 +76,6 @@ public class UserService extends AbstractService{
         if (dto.getBirthdayDate() != null && !dto.getBirthdayDate().equals(u.getBirthdayDate())) {
             u.setBirthdayDate(dto.getBirthdayDate());
         }
-        if (dto.getCreatedAt() != null && !dto.getCreatedAt().equals(u.getCreatedAt())) {
-            u.setCreatedAt(dto.getCreatedAt());
-        }
-
         userRepository.save(u);
     }
 

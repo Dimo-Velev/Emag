@@ -1,0 +1,11 @@
+#register
+POST http://localhost:7777/users/signup
+Content-Type: application/json
+
+{
+  "firstName": "L",
+  "lastName": "T",
+  "email": "L.T@example.com",
+  "password": "mypassword",
+  "confirmPassword": "mypassword"
+}
