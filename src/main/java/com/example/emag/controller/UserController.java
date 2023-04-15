@@ -1,6 +1,6 @@
 package com.example.emag.controller;
 
-import com.example.emag.model.DTOs.*;
+import com.example.emag.model.DTOs.user.*;
 import com.example.emag.model.entities.Product;
 import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -16,15 +16,13 @@ public class UserController extends AbstractController{
     @Autowired
     private UserService userService;
 
-    //register
     @PostMapping("/users/signup")
     public UserWithoutPassDTO register(@Valid @RequestBody RegisterDTO dto){
         return userService.register(dto);
     }
 
-    //login
     @PostMapping("/login")
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession s){
+    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession s){ //TODO add @Valid
         UserWithoutPassDTO respDto = userService.login(dto);
         s.setAttribute("LOGGED", true);
         s.setAttribute("LOGGED_ID", respDto.getId());
@@ -37,9 +35,10 @@ public class UserController extends AbstractController{
     }
 
     @PostMapping("/password")
-    public UserWithoutPassDTO changePass(){
-        //TODO
-        return null;
+    public UserWithoutPassDTO changePass(@Valid @RequestBody ChangePassDTO dto, HttpSession s ){
+        int userId = getLoggedId(s);
+        UserWithoutPassDTO respDto = userService.changePass(dto,userId);
+        return respDto;
     }
 
     //view my account
@@ -52,11 +51,11 @@ public class UserController extends AbstractController{
 
     @GetMapping("/history")
     public List<Product> viewUserHistory(){
-        //TODO view product history
+        //TODO - need products, TBC
         return null;
     }
     @PutMapping("/my-account")
-    public void editUserInfo(@RequestBody EditProfileDTO dto,HttpSession s){
+    public void editUserInfo(@Valid @RequestBody EditProfileDTO dto, HttpSession s){
         userService.editUserInfo(dto, getLoggedId(s));
     }
 

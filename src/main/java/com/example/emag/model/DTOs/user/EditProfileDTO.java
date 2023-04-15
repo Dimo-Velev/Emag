@@ -1,5 +1,4 @@
-package com.example.emag.model.DTOs;
-
+package com.example.emag.model.DTOs.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -13,9 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
-public class UserWithoutPassDTO {
+public class EditProfileDTO {
 
-    private int id;
     private String firstName;
     private String lastName;
     @Email
@@ -25,7 +23,6 @@ public class UserWithoutPassDTO {
     private String userName;
     private boolean isMale;
     private LocalDate birthdayDate;
-    private LocalDateTime createdAt;
     private boolean isSubscribed;
 
 }

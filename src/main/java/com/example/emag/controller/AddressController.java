@@ -1,6 +1,6 @@
 package com.example.emag.controller;
 
-import com.example.emag.model.DTOs.AddressDTO;
+import com.example.emag.model.DTOs.address.AddressDTO;
 import com.example.emag.service.AddressService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
