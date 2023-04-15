@@ -53,6 +53,8 @@ public class User {
     @Column
     private boolean isSubscribed;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
     private List<Card> cards;
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    private List<Card> addresses;
 }

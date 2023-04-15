@@ -5,14 +5,11 @@ import com.example.emag.model.entities.Product;
 import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@RestController
 public class UserController extends AbstractController{
 
     @Autowired
@@ -66,6 +63,4 @@ public class UserController extends AbstractController{
     public void editSubscription(HttpSession s){
         userService.editSubscription(getLoggedId(s));
     }
-
-
 }

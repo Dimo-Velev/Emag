@@ -1,6 +1,7 @@
 package com.example.emag;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.NameTokenizers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,11 @@ public class EmagApplication {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setSourceNameTokenizer(NameTokenizers.UNDERSCORE)
+                .setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
+        return modelMapper;
     }
 
     @Bean

@@ -25,10 +25,7 @@ public class Address {
     private String residentialArea;
     @Column
     private int floor;
-//    @Column
-//    private User user;
-    @Column
-    private String region;
-    @Column
-    private String city;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

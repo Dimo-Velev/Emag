@@ -16,8 +16,14 @@ public abstract class AbstractService {
     protected ModelMapper mapper;
 
 
-
-    protected User getUserById(int id){
+    protected User getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    protected boolean ifUserExists(int id) {
+        if (!userRepository.existsById(id)) {
+            throw new NotFoundException("User not found");
+        }
+        return true;
     }
 }

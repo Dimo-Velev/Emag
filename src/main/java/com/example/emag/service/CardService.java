@@ -6,11 +6,12 @@ import com.example.emag.model.entities.Card;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.repositories.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
-
+@Service
 public class CardService extends AbstractService {
 
     @Autowired
@@ -34,7 +35,9 @@ public class CardService extends AbstractService {
         if (isExpired(dto)) {
             throw new BadRequestException("Card is expired.");
         }
-        Card card = cardRepository.save(mapper.map(dto, Card.class));
+        Card card = mapper.map(dto, Card.class);
+        card.setUser(getUserById(id));
+        cardRepository.save(card);
         return mapper.map(card, CardWithFewInfoDTO.class);
     }
 

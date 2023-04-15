@@ -73,4 +73,10 @@ public abstract class AbstractController {
                 .status(status.value())
                 .build();
     }
+
+    protected boolean isLoggedAdmin(HttpSession session){
+        //TODO
+        isLogged(session);
+        return false;
+    }
 }
