@@ -2,13 +2,16 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.*;
 import com.example.emag.model.entities.User;
+import com.example.emag.model.exceptions.UnauthorizedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.example.emag.model.exceptions.*;
+import com.example.emag.model.exceptions.BadRequestException;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class UserService extends AbstractService{
 
     @Autowired
@@ -28,6 +31,7 @@ public class UserService extends AbstractService{
             throw new BadRequestException("Email already exists!");
         }
         User u = mapper.map(dto, User.class);
+        System.out.println("does this execute??");
         u.setPassword(encoder.encode(u.getPassword()));
         userRepository.save(u);
         return mapper.map(u, UserWithoutPassDTO.class);

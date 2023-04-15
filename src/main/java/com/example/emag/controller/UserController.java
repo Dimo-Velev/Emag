@@ -5,22 +5,20 @@ import com.example.emag.model.entities.Product;
 import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@RestController
 public class UserController extends AbstractController{
 
     @Autowired
     private UserService userService;
 
     //register
-    @PostMapping("/signup")
+    @PostMapping("/users/signup")
     public UserWithoutPassDTO register(@RequestBody RegisterDTO dto){
+        System.out.println("does this execute??");
         return userService.register(dto);
     }
 
