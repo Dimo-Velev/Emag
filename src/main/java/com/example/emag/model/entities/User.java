@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -47,4 +48,6 @@ public class User {
     @Column
     private boolean isSubscribed;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Card> cards;
 }

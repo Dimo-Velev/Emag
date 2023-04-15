@@ -2,19 +2,23 @@ package com.example.emag.model.entities;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "reviews")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
     @Column
-    private Integer rating;
+    private int rating;
 
     @Column
     private String headline;
@@ -29,12 +33,12 @@ public class Review {
     private String pictureUrl;
 
     @Column
-    private Integer userId;
+    private int userId;
 
     @Column
-    private Integer productId;
+    private int productId;
 
     @Column
-    private Integer isApproved;
+    private int isApproved;
 
 }

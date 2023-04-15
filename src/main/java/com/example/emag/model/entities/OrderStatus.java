@@ -1,7 +1,11 @@
 package com.example.emag.model.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "statuses")
 public class OrderStatus {
