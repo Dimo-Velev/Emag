@@ -1,4 +1,4 @@
-package com.example.emag.model.DTOs;
+package com.example.emag.model.DTOs.address;
 
 
 import jakarta.validation.constraints.Pattern;

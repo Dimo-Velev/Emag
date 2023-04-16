@@ -1,7 +1,7 @@
 package com.example.emag.service;
 
-import com.example.emag.model.DTOs.CardDTO;
-import com.example.emag.model.DTOs.CardWithFewInfoDTO;
+import com.example.emag.model.DTOs.card.CardDTO;
+import com.example.emag.model.DTOs.card.CardWithFewInfoDTO;
 import com.example.emag.model.entities.Card;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;

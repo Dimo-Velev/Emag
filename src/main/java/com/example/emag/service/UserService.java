@@ -1,6 +1,6 @@
 package com.example.emag.service;
 
-import com.example.emag.model.DTOs.*;
+import com.example.emag.model.DTOs.user.*;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,22 @@ public class UserService extends AbstractService{
     }
 
 
+    public UserWithoutPassDTO changePass(ChangePassDTO dto, int userId) {
+        User u = getUserById(userId);
+        if(!encoder.matches(dto.getPassword(),u.getPassword())){
+            throw new BadRequestException("Passwords must match!");
+        }
+        if(!encoder.matches(dto.getPassword(),u.getPassword())){
+            throw new BadRequestException("You have provided invalid password for authentication");
+        }
+        u.setPassword(encoder.encode(dto.getConfirmNewPassword()));
+        userRepository.save(u);
+        return mapper.map(u, UserWithoutPassDTO.class);
+    }
+
     public UserWithoutPassDTO login(LoginDTO dto) {
         Optional<User> u = userRepository.getByEmail(dto.getEmail());
-        if(!u.isPresent()){
+        if(u.isEmpty()){
             throw new UnauthorizedException("Wrong credentials");
         }
         if(!encoder.matches(dto.getPassword(),u.get().getPassword())){
@@ -49,7 +62,7 @@ public class UserService extends AbstractService{
         return mapper.map(u,UserWithoutPassDTO.class);
     }
 
-    public void editUserInfo(EditProfileDTO dto,int loggedId) {
+    public void editUserInfo(EditProfileDTO dto, int loggedId) {
         //TODO
         // add validation for all data
         // throw Exceptions if provided is null
@@ -85,4 +98,5 @@ public class UserService extends AbstractService{
         u.setSubscribed(!u.isSubscribed());
         userRepository.save(u);
     }
+
 }

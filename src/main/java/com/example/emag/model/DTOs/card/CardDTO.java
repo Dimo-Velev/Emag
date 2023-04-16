@@ -1,4 +1,4 @@
-package com.example.emag.model.DTOs;
+package com.example.emag.model.DTOs.card;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;

@@ -1,8 +1,8 @@
 package com.example.emag.controller;
 
 
-import com.example.emag.model.DTOs.CardDTO;
-import com.example.emag.model.DTOs.CardWithFewInfoDTO;
+import com.example.emag.model.DTOs.card.CardDTO;
+import com.example.emag.model.DTOs.card.CardWithFewInfoDTO;
 import com.example.emag.service.CardService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
