@@ -4,8 +4,10 @@ package com.example.emag.model.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -22,18 +24,22 @@ public class Order {
     private double price;
 
     @Column
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "status_id", nullable = false)
-//    private OrderStatus status;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "payment_type_id", nullable = false)
-//    private PaymentType paymentType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private OrderStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "payment_type_id", nullable = false)
+    private PaymentType paymentType;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderContent> productsInOrder;
 
 }

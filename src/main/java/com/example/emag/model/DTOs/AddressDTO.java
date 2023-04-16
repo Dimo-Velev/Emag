@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 public class AddressDTO {
 
-    @Pattern(regexp = "^[A-Za-z]+ [A-Za-z]+$", message = "Names should be letters only.")
+    @Pattern(regexp = "^[A-Za-z]+ [A-Za-z]+$", message = "Names should be letters only, separated with space.")
     private String name;
     @Pattern(regexp = "^08[789]\\d{7}$", message = "Phone number should start with 08 and be 10 numbers.")
     private String phoneNumber;

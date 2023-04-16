@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 public class CardController extends AbstractController {
 
@@ -28,8 +29,7 @@ public class CardController extends AbstractController {
 
     @DeleteMapping("/cards/{id}")
     public String delete(@PathVariable int id, HttpSession session) {
-        isLogged(session);
-        cardService.deleteCard(id);
+        cardService.deleteCard(id, getLoggedId(session));
         return "Card is deleted";
     }
 

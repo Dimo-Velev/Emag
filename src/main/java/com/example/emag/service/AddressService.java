@@ -3,6 +3,7 @@ package com.example.emag.service;
 import com.example.emag.model.DTOs.AddressDTO;
 import com.example.emag.model.entities.Address;
 import com.example.emag.model.exceptions.NotFoundException;
+import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,17 +54,25 @@ public class AddressService extends AbstractService {
                 .collect(Collectors.toList());
     }
 
-    public AddressDTO getAddress(int id) {
-        Address address = addressRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Address not found."));
+    public AddressDTO getAddress(int id, int userId) {
+        Address address = findAddressById(id);
+        checkIfItsUserAddress(address, userId);
         return mapper.map(address, AddressDTO.class);
     }
 
-    public String deleteAddress(int id) {
-        if (addressRepository.findById(id).isEmpty()) {
-            throw new NotFoundException("Address doesn't exist.");
-        }
+    public String deleteAddress(int id, int userId) {
+        checkIfItsUserAddress(findAddressById(id), userId);
         addressRepository.deleteById(id);
         return "Address was deleted.";
+    }
+
+    private Address findAddressById(int id) {
+        return addressRepository.findById(id).orElseThrow(() -> new NotFoundException("Address not found."));
+    }
+
+    private void checkIfItsUserAddress(Address address, int userId) {
+        if (userId != address.getUser().getId()) {
+            throw new UnauthorizedException("You have no access to this resource.");
+        }
     }
 }
