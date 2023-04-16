@@ -3,6 +3,7 @@ package com.example.emag.controller;
 import com.example.emag.model.DTOs.address.AddressDTO;
 import com.example.emag.service.AddressService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +16,12 @@ public class AddressController extends AbstractController {
     private AddressService addressService;
 
     @PostMapping("/addresses")
-    public AddressDTO add(@RequestBody AddressDTO dto, HttpSession session) {
+    public AddressDTO add(@Valid @RequestBody AddressDTO dto, HttpSession session) {
         return addressService.addAddress(dto, getLoggedId(session));
     }
 
     @PutMapping("/addresses/{id}")
-    public AddressDTO edit(@RequestBody AddressDTO dto, @PathVariable int id, HttpSession session) {
+    public AddressDTO edit(@Valid @RequestBody AddressDTO dto,@PathVariable int id, HttpSession session) {
         isLogged(session);
         return addressService.editAddress(dto, id);
     }
@@ -32,13 +33,11 @@ public class AddressController extends AbstractController {
 
     @GetMapping("/addresses/{id}")
     public AddressDTO getById(@PathVariable int id, HttpSession session) {
-        isLogged(session);
-        return addressService.getAddress(id);
+        return addressService.getAddress(id, getLoggedId(session));
     }
 
     @DeleteMapping("/addresses/{id}")
     public String deleteById(@PathVariable int id, HttpSession session) {
-        isLogged(session);
-        return addressService.deleteAddress(id);
+        return addressService.deleteAddress(id, getLoggedId(session));
     }
 }

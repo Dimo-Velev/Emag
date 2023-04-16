@@ -8,7 +8,7 @@ import com.example.emag.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CategoryService extends AbstractService{
+public class CategoryService extends AbstractService {
 
     public CategoryViewAddedDTO addCategory(CategoryAddDTO dto) {
         if(categoryRepository.existsByNameIgnoreCase(dto.getName())){

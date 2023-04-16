@@ -4,6 +4,8 @@ import com.example.emag.model.DTOs.card.CardDTO;
 import com.example.emag.model.DTOs.card.CardWithFewInfoDTO;
 import com.example.emag.model.entities.Card;
 import com.example.emag.model.exceptions.BadRequestException;
+import com.example.emag.model.exceptions.NotFoundException;
+import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,11 @@ public class CardService extends AbstractService {
         return mapper.map(card, CardWithFewInfoDTO.class);
     }
 
-    public String deleteCard(int id){
+    public String deleteCard(int id, int userId) {
+        Card card = cardRepository.findById(id).orElseThrow(() -> new NotFoundException("Card not found."));
+        if (card.getUser().getId() != userId) {
+            throw new UnauthorizedException("You have no access to this resource.");
+        }
         cardRepository.deleteById(id);
         return "Card was deleted.";
     }
