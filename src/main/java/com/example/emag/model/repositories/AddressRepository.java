@@ -10,4 +10,5 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address,Integer> {
 
   List<Address> findAllByUserId(int id);
+  Address findByIdAndUserId(int id, int userId);
 }

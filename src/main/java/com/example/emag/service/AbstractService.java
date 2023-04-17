@@ -1,13 +1,8 @@
 package com.example.emag.service;
 
-import com.example.emag.model.entities.Product;
-import com.example.emag.model.entities.User;
+import com.example.emag.model.entities.*;
 import com.example.emag.model.exceptions.NotFoundException;
-import com.example.emag.model.repositories.CartContentRepository;
-import com.example.emag.model.entities.Category;
-import com.example.emag.model.repositories.CategoryRepository;
-import com.example.emag.model.repositories.ProductRepository;
-import com.example.emag.model.repositories.UserRepository;
+import com.example.emag.model.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +21,12 @@ public abstract class AbstractService {
     protected ModelMapper mapper;
     @Autowired
     protected CartContentRepository cartContentRepository;
-
+    @Autowired
+    protected PaymentTypeRepository paymentTypeRepository;
+    @Autowired
+    protected AddressRepository addressRepository;
+    @Autowired
+    protected OrderContentRepository orderContentRepository;
     protected Category getCategoryById(int id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Parent category not found"));
     }

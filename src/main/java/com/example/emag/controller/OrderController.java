@@ -30,7 +30,7 @@ public class OrderController extends AbstractController{
         return orderService.cancelOrderById(id,getLoggedId(session));
     }
     @PostMapping("/orders")
-    public CreatedOrderDTO create(@RequestParam PaymentType paymentType, Address address, HttpSession session){
-        return orderService.createOrder(getLoggedId(session));
+    public CreatedOrderDTO create(@RequestBody int paymentId, HttpSession session){
+        return orderService.createOrder(paymentId,getLoggedId(session));
     }
 }

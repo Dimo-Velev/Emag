@@ -43,4 +43,5 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private Set<OrderContent> productsInOrder;
 
+
 }
