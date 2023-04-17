@@ -37,16 +37,14 @@ public class UserController extends AbstractController{
     @PostMapping("/password")
     public UserWithoutPassDTO changePass(@Valid @RequestBody ChangePassDTO dto, HttpSession s ){
         int userId = getLoggedId(s);
-        UserWithoutPassDTO respDto = userService.changePass(dto,userId);
-        return respDto;
+        return userService.changePass(dto,userId);
     }
 
     //view my account
     @GetMapping("/my-account")
     public UserWithoutPassDTO viewUserInfo(HttpSession s){
         int userId = getLoggedId(s);
-        UserWithoutPassDTO respDto = userService.viewUserInfo(userId);
-        return respDto;
+        return userService.viewUserInfo(userId);
     }
 
     @GetMapping("/history")

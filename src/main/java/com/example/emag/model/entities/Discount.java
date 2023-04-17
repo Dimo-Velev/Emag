@@ -2,6 +2,7 @@ package com.example.emag.model.entities;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,13 +19,16 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "discount_percent", nullable = false)
+    @NotNull
+    @Column
     private int discountPercent;
 
-    @Column(name = "start_date", nullable = false)
+    @NotNull
+    @Column
     private LocalDateTime startDate;
 
-    @Column(name = "expire_date", nullable = false)
+    @NotNull
+    @Column
     private LocalDateTime expireDate;
 
 }
