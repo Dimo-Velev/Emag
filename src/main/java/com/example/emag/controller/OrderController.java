@@ -1,7 +1,7 @@
 package com.example.emag.controller;
 
-import com.example.emag.model.DTOs.CreatedOrderDTO;
-import com.example.emag.model.DTOs.OrderWithFewInfoDTO;
+import com.example.emag.model.DTOs.order.CreatedOrderDTO;
+import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
 import com.example.emag.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;

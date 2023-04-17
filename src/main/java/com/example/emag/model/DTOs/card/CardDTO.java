@@ -24,6 +24,7 @@ public class CardDTO {
     private int expireYear;
     @Pattern(regexp = "^[0-9]{3,4}$", message = "CVV code must be a 3 or 4-digit number")
     private int cvvCode;
+    @Pattern(regexp = "^[A-Z]+ [A-Z]+$", message = "Not a valid name, Name must be first and last all capital letters, separated by space.")
     private String name;
 
 }

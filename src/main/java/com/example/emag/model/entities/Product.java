@@ -27,9 +27,9 @@ public class Product {
     @Column
     private int quantity;
 
-//    @Column
-//    @JoinColumn(name = "discount_id")
-//    private Discount discount;
+    @ManyToOne
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
 //
 //    @Column
 //    @JoinColumn(name = "category_id", nullable = false)

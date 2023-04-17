@@ -45,4 +45,11 @@ public class User {
     private List<Card> cards;
     @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
     private List<Card> addresses;
+    @ManyToMany
+    @JoinTable(
+            name = "favorite_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> favoriteProducts;
 }

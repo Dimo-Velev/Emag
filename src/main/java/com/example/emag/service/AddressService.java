@@ -55,18 +55,18 @@ public class AddressService extends AbstractService {
     }
 
     public AddressDTO getAddress(int id, int userId) {
-        Address address = findAddressById(id);
+        Address address = getAddressById(id);
         checkIfItsUserAddress(address, userId);
         return mapper.map(address, AddressDTO.class);
     }
 
     public String deleteAddress(int id, int userId) {
-        checkIfItsUserAddress(findAddressById(id), userId);
+        checkIfItsUserAddress(getAddressById(id), userId);
         addressRepository.deleteById(id);
         return "Address was deleted.";
     }
 
-    private Address findAddressById(int id) {
+    private Address getAddressById(int id) {
         return addressRepository.findById(id).orElseThrow(() -> new NotFoundException("Address not found."));
     }
 

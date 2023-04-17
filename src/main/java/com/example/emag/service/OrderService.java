@@ -1,12 +1,13 @@
 package com.example.emag.service;
 
-import com.example.emag.model.DTOs.CreatedOrderDTO;
-import com.example.emag.model.DTOs.OrderWithFewInfoDTO;
+import com.example.emag.model.DTOs.order.CreatedOrderDTO;
+import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
 import com.example.emag.model.entities.Order;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.OrderRepository;
 import com.example.emag.model.repositories.OrderStatusRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,7 @@ public class OrderService extends AbstractService {
         }
     }
 
+    @Transactional
     public CreatedOrderDTO createOrder(int id) {
         //TODO
        return new CreatedOrderDTO();

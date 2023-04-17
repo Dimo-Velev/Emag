@@ -1,5 +1,4 @@
-package com.example.emag.model.DTOs;
-
+package com.example.emag.model.DTOs.cart;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,8 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-public class CreatedOrderDTO {
+public class CartContentDTO {
 
-    private List<ProductOrderDTO> products;
-    private String name;
+    private List<ProductInCartDTO> products;
     private double totalPrice;
 }

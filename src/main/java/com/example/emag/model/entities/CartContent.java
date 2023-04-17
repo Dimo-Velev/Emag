@@ -1,5 +1,6 @@
 package com.example.emag.model.entities;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,16 +10,16 @@ import lombok.Setter;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "orders_have_products")
-public class OrderContent {
+@Table(name = "products_in_cart")
+public class CartContent {
 
     @EmbeddedId
-    private OrderContentKey id;
+    private CartContentKey id;
 
     @ManyToOne
-    @MapsId("orderId")
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @MapsId("userId")
+    @JoinColumn(name= "user_id")
+    private User user;
 
     @ManyToOne
     @MapsId("productId")

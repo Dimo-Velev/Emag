@@ -1,4 +1,4 @@
-package com.example.emag.model.DTOs;
+package com.example.emag.model.DTOs.order;
 
 import com.example.emag.model.entities.OrderStatus;
 import com.example.emag.model.entities.PaymentType;
