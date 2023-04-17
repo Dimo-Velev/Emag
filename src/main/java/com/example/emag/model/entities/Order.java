@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -40,6 +41,6 @@ public class Order {
     private PaymentType paymentType;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderContent> productsInOrder;
+    private Set<OrderContent> productsInOrder;
 
 }

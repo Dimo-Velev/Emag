@@ -21,20 +21,18 @@ public class CartService extends AbstractService {
 
     public ProductInCartDTO addProductToCart(int id, int quantity, int userId) {
         checkIfValidQuantity(quantity);
-        CartContentKey compositeKey = createCompositeKey(id, userId);
-        CartContent cartContent = createCartContent(id,userId,compositeKey,quantity);
-        //CartContent cartContentInDB = cartContentRepository.findByProductIdAndUserId(id, userId);
-        //if (cartContentInDB == null) {
+        ifUserExists(userId);
+        CartContent cartContentInDB = cartContentRepository.findByProductIdAndUserId(id, userId);
+        if (cartContentInDB == null) {
+            CartContentKey compositeKey = createCompositeKey(id, userId);
+            CartContent cartContent = createCartContent(id, userId, compositeKey, quantity);
             cartContentRepository.save(cartContent);
-       // } else {
-        //    cartContentInDB.setQuantity(cartContentInDB.getQuantity() + quantity);
-        //    if ()
-       // } TODO if product is already there, to add the quantity, check if its above 100 to throw exception if not save in db
-        ProductInCartDTO dto = new ProductInCartDTO();
-        dto.setName(cartContent.getProduct().getName());
-        dto.setQuantity(cartContent.getQuantity());
-        dto.setPrice(getProductPrice(id));
-        return dto;
+            return createDTO(cartContent);
+        } else {
+            cartContentInDB.setQuantity(cartContentInDB.getQuantity() + quantity);
+            cartContentRepository.save(cartContentInDB);
+            return createDTO(cartContentInDB);
+        }
     }
 
     private void checkIfValidQuantity(int quantity) {
@@ -45,6 +43,7 @@ public class CartService extends AbstractService {
 
     public ProductInCartDTO editQuantityOfProductInCart(int id, int quantity, int userId) {
         checkIfValidQuantity(quantity);
+        ifUserExists(userId);
         CartContent cartContent = cartContentRepository.findByProductIdAndUserId(id, userId);
         if (cartContent == null) {
             throw new NotFoundException("Product not found in cart.");
@@ -54,6 +53,7 @@ public class CartService extends AbstractService {
         product.setPrice(getProductPrice(cartContent.getProduct().getId()));
         product.setName(cartContent.getProduct().getName());
         product.setQuantity(quantity);
+        cartContentRepository.save(cartContent);
         return product;
     }
 
@@ -74,7 +74,7 @@ public class CartService extends AbstractService {
     }
 
     private CartContent createCartContent(int id, int userId, CartContentKey key, int quantity) {
-        User user = getUserById(id);
+        User user = getUserById(userId);
         Product product = getProductById(id);
         CartContent cartContent = new CartContent();
         cartContent.setUser(user);
@@ -82,5 +82,14 @@ public class CartService extends AbstractService {
         cartContent.setQuantity(quantity);
         cartContent.setId(key);
         return cartContent;
+    }
+
+    private ProductInCartDTO createDTO(CartContent cartContent) {
+        ProductInCartDTO dto = new ProductInCartDTO();
+        dto.setName(cartContent.getProduct().getName());
+        dto.setQuantity(cartContent.getQuantity());
+        dto.setPrice(cartContent.getProduct().getPrice());
+        dto.setDiscount(cartContent.getProduct().getDiscount().getDiscountPercent() + "%");
+        return dto;
     }
 }

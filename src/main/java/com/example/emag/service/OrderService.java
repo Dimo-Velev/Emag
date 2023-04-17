@@ -2,7 +2,10 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.order.CreatedOrderDTO;
 import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
+import com.example.emag.model.entities.CartContent;
 import com.example.emag.model.entities.Order;
+import com.example.emag.model.entities.User;
+import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.OrderRepository;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,10 +41,10 @@ public class OrderService extends AbstractService {
 
     public OrderWithFewInfoDTO cancelOrderById(int id, int userId) {
         Order order = findOrderById(id);
-        checkIfItsUserOrder(order,userId);
+        checkIfItsUserOrder(order, userId);
         order.setStatus(orderStatusRepository.findById(7).orElseThrow(() -> new NotFoundException("This should never happen.")));
         orderRepository.save(order);
-        return mapper.map(order,OrderWithFewInfoDTO.class);
+        return mapper.map(order, OrderWithFewInfoDTO.class);
     }
 
     private Order findOrderById(int id) {
@@ -55,7 +59,48 @@ public class OrderService extends AbstractService {
 
     @Transactional
     public CreatedOrderDTO createOrder(int id) {
-        //TODO
-       return new CreatedOrderDTO();
+        Set<CartContent> products = getProductsFromCart(id);
+        Order order = createNewOrder(products, getUserById(id));
+
+
+        return new CreatedOrderDTO();
+    }
+
+    private Set<CartContent> getProductsFromCart(int id) {
+        checkIfCartIsEmpty(id);
+        User user = getUserById(id);
+        Set<CartContent> productsInCart = user.getProductsInCart();
+        productsInCart
+                .forEach(cartContent -> cartContentRepository.deleteById(cartContent.getId()));
+        return productsInCart;
+    }
+
+    private Order createNewOrder(Set<CartContent> products, User user) {
+        Order order = new Order();
+        order.setPrice(calculatePrice(products));
+        order.setUser(user);
+        //order.set
+        //TODO LYUBO REQUESTED ME TO PUSH :D :D
+        return new Order();
+    }
+
+    private void checkIfCartIsEmpty(int id) {
+       CartContent cartContent = cartContentRepository.findByUserId(id);
+       if (cartContent == null){
+           throw new BadRequestException("Cart is empty");
+       }
+    }
+
+    private double calculatePrice(Set<CartContent> products) {
+        return products.stream()
+                .mapToDouble(cartContent -> {
+                    double price = cartContent.getProduct().getPrice();
+                    if (cartContent.getProduct().getDiscount() != null) {
+                        double discount = cartContent.getProduct().getDiscount().getDiscountPercent() / 100.0;
+                        price -= price * discount;
+                    }
+                    return price * cartContent.getQuantity();
+                })
+                .sum();
     }
 }

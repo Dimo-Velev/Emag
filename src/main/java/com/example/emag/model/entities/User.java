@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 
 @Getter
@@ -41,15 +42,17 @@ public class User {
     private boolean isAdmin;
     @Column(name = "is_subscribed")
     private boolean isSubscribed;
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Card> cards;
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Card> addresses;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "favorite_products",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private List<Product> favoriteProducts;
+    private Set<Product> favoriteProducts;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<CartContent> productsInCart;
 }
