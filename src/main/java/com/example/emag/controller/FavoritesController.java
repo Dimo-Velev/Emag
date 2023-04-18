@@ -16,7 +16,7 @@ public class FavoritesController extends AbstractController {
     private FavoritesService favouritesService;
 
 
-    @GetMapping("/favourites")
+    @GetMapping("/favorites")
     public List<ProductFavoritesDTO> getFavourites(HttpSession session){
         return favouritesService.getFavouritesProducts(getLoggedId(session));
     }

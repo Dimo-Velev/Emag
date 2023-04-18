@@ -2,6 +2,8 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.cart.CartContentDTO;
 import com.example.emag.model.DTOs.cart.ProductInCartDTO;
+import com.example.emag.model.DTOs.product.ProductFavoritesDTO;
+import com.example.emag.model.DTOs.product.ProductQuantityDTO;
 import com.example.emag.model.DTOs.user.UserWithCartDTO;
 import com.example.emag.model.entities.CartContent;
 import com.example.emag.model.entities.CartContentKey;
@@ -19,17 +21,16 @@ public class CartService extends AbstractService {
         return mapper.map(dto, CartContentDTO.class);
     }
 
-    public ProductInCartDTO addProductToCart(int id, int quantity, int userId) {
-        checkIfValidQuantity(quantity);
+    public ProductInCartDTO addProductToCart(int id, int userId) {
         ifUserExists(userId);
         CartContent cartContentInDB = cartContentRepository.findByProductIdAndUserId(id, userId);
         if (cartContentInDB == null) {
             CartContentKey compositeKey = createCompositeKey(id, userId);
-            CartContent cartContent = createCartContent(id, userId, compositeKey, quantity);
+            CartContent cartContent = createCartContent(id, userId, compositeKey);
             cartContentRepository.save(cartContent);
             return createDTO(cartContent);
         } else {
-            cartContentInDB.setQuantity(cartContentInDB.getQuantity() + quantity);
+            cartContentInDB.setQuantity(cartContentInDB.getQuantity() + 1);
             cartContentRepository.save(cartContentInDB);
             return createDTO(cartContentInDB);
         }
@@ -41,18 +42,18 @@ public class CartService extends AbstractService {
         }
     }
 
-    public ProductInCartDTO editQuantityOfProductInCart(int id, int quantity, int userId) {
-        checkIfValidQuantity(quantity);
+    public ProductInCartDTO editQuantityOfProductInCart(int id, ProductQuantityDTO dto, int userId) {
+        checkIfValidQuantity(dto.getQuantity());
         ifUserExists(userId);
         CartContent cartContent = cartContentRepository.findByProductIdAndUserId(id, userId);
         if (cartContent == null) {
             throw new NotFoundException("Product not found in cart.");
         }
-        cartContent.setQuantity(quantity);
+        cartContent.setQuantity(dto.getQuantity());
         ProductInCartDTO product = new ProductInCartDTO();
         product.setPrice(getProductPrice(cartContent.getProduct().getId()));
         product.setName(cartContent.getProduct().getName());
-        product.setQuantity(quantity);
+        product.setQuantity(dto.getQuantity());
         cartContentRepository.save(cartContent);
         return product;
     }
@@ -73,13 +74,13 @@ public class CartService extends AbstractService {
         return compositeKey;
     }
 
-    private CartContent createCartContent(int id, int userId, CartContentKey key, int quantity) {
+    private CartContent createCartContent(int id, int userId, CartContentKey key) {
         User user = getUserById(userId);
         Product product = getProductById(id);
         CartContent cartContent = new CartContent();
         cartContent.setUser(user);
         cartContent.setProduct(product);
-        cartContent.setQuantity(quantity);
+        cartContent.setQuantity(1);
         cartContent.setId(key);
         return cartContent;
     }

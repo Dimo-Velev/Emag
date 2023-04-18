@@ -2,6 +2,7 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.order.CreatedOrderDTO;
 import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
+import com.example.emag.model.DTOs.product.ProductPaymentDTO;
 import com.example.emag.model.entities.*;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
@@ -57,8 +58,8 @@ public class OrderService extends AbstractService {
     }
 
     @Transactional
-    public CreatedOrderDTO createOrder(int paymentId, int userId) {
-        PaymentType paymentType = paymentTypeRepository.findById(paymentId).orElseThrow(() -> new BadRequestException("That payment type doesn't exist."));
+    public CreatedOrderDTO createOrder(ProductPaymentDTO dto, int userId) {
+        PaymentType paymentType = paymentTypeRepository.findById(dto.getPaymentId()).orElseThrow(() -> new BadRequestException("That payment type doesn't exist."));
         Set<CartContent> products = getProductsFromCart(userId);
         Order order = createNewOrder(products, getUserById(userId), paymentType);
         return mapper.map(order, CreatedOrderDTO.class);
