@@ -1,13 +1,11 @@
 package com.example.emag.service;
 
+import com.example.emag.model.entities.Discount;
 import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.NotFoundException;
-import com.example.emag.model.repositories.CartContentRepository;
+import com.example.emag.model.repositories.*;
 import com.example.emag.model.entities.Category;
-import com.example.emag.model.repositories.CategoryRepository;
-import com.example.emag.model.repositories.ProductRepository;
-import com.example.emag.model.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +24,18 @@ public abstract class AbstractService {
     protected ModelMapper mapper;
     @Autowired
     protected CartContentRepository cartContentRepository;
+    @Autowired
+    protected DiscountRepository discountRepository;
 
     protected Category getCategoryById(int id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Parent category not found"));
     }
     protected User getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+    }
+    protected Discount getDiscountbyId(int id){
+        return discountRepository.findById(id).orElseThrow(() -> new NotFoundException("Discount not found"));
+
     }
 
     protected boolean ifUserExists(int id) {

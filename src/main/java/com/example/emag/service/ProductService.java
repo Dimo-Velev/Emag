@@ -24,5 +24,11 @@ public class ProductService extends AbstractService{
         productRepository.deleteById(p.getId());
         return respDto;
     }
-    
+
+    public ProductViewDTO changeProductQty(int id,int qty) {
+        Product p = getProductById(id);
+        p.setQuantity(qty);
+        productRepository.save(p);
+        return mapper.map(p,ProductViewDTO.class);
+    }
 }

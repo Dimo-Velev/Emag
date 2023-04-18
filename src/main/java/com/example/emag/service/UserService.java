@@ -92,7 +92,6 @@ public class UserService extends AbstractService{
         userRepository.save(u);
     }
 
-
     public void editSubscription(int loggedId) {
         User u = getUserById(loggedId);
         u.setSubscribed(!u.isSubscribed());

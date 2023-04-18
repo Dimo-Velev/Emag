@@ -1,6 +1,7 @@
 package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.product.ProductAddDTO;
+import com.example.emag.model.DTOs.product.ProductQtyChangeDTO;
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.service.ProductService;
 import jakarta.validation.Valid;
@@ -25,7 +26,18 @@ public class ProductController extends AbstractController{
     public ProductViewDTO deleteProductById(@PathVariable int id) {
         return productService.deleteProductById(id);
     }
-
-
-
+    @PutMapping("/products/{id}/quantity")
+    public ProductViewDTO changeProductQty(@Valid @PathVariable int id, @RequestBody ProductQtyChangeDTO dto) {
+        return productService.changeProductQty(id,dto.getQuantity());
     }
+
+    @PutMapping("/products/{id}")
+    public ProductViewDTO editProductDetails(@PathVariable int id){
+//        return productService.editProductDetails(id);
+        //TODO
+        return null;
+    }
+
+
+
+}

@@ -22,7 +22,7 @@ public class UserController extends AbstractController{
     }
 
     @PostMapping("/login")
-    public UserWithoutPassDTO login(@RequestBody LoginDTO dto, HttpSession s){ //TODO add @Valid
+    public UserWithoutPassDTO login(@Valid @RequestBody LoginDTO dto, HttpSession s){
         UserWithoutPassDTO respDto = userService.login(dto);
         s.setAttribute("LOGGED", true);
         s.setAttribute("LOGGED_ID", respDto.getId());
@@ -40,7 +40,6 @@ public class UserController extends AbstractController{
         return userService.changePass(dto,userId);
     }
 
-    //view my account
     @GetMapping("/my-account")
     public UserWithoutPassDTO viewUserInfo(HttpSession s){
         int userId = getLoggedId(s);

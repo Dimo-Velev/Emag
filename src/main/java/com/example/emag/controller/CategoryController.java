@@ -4,6 +4,7 @@ import com.example.emag.model.DTOs.category.CategoryAddDTO;
 import com.example.emag.model.DTOs.category.CategoryViewAddedDTO;
 import com.example.emag.model.DTOs.category.CategoryViewDTO;
 import com.example.emag.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class CategoryController extends AbstractController{
     private CategoryService categoryService;
 
     @PostMapping("/categories")
-    public CategoryViewAddedDTO addCategory(@RequestBody CategoryAddDTO c){
+    public CategoryViewAddedDTO addCategory(@Valid @RequestBody CategoryAddDTO c){
         return categoryService.addCategory(c);
     }
 

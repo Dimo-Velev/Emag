@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -30,5 +31,9 @@ public class Discount {
     @NotNull
     @Column
     private LocalDateTime expireDate;
+
+//    @OneToMany(mappedBy = "discount_id")
+//    private List<Product> discountProducts;
+
 
 }
