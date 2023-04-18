@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-
 @Service
 public abstract class AbstractService {
     @Autowired
@@ -27,6 +26,11 @@ public abstract class AbstractService {
     @Autowired
     protected DiscountRepository discountRepository;
 
+    protected PaymentTypeRepository paymentTypeRepository;
+    @Autowired
+    protected AddressRepository addressRepository;
+    @Autowired
+    protected OrderContentRepository orderContentRepository;
     protected Category getCategoryById(int id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Parent category not found"));
     }

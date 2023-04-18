@@ -2,6 +2,7 @@ package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.cart.CartContentDTO;
 import com.example.emag.model.DTOs.cart.ProductInCartDTO;
+import com.example.emag.model.DTOs.product.ProductQuantityDTO;
 import com.example.emag.service.CartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +20,17 @@ public class CartController extends AbstractController {
         return cartService.getCartContent(getLoggedId(session));
     }
 
-    @PostMapping("/cart/product{id}")
-    public ProductInCartDTO addProduct(@PathVariable int id, @RequestParam int quantity, HttpSession session) {
-        return cartService.addProductToCart(id, quantity, getLoggedId(session));
+    @PostMapping("/cart/products/{id}")
+    public ProductInCartDTO addProduct(@PathVariable int id, HttpSession session) {
+        return cartService.addProductToCart(id,getLoggedId(session));
     }
 
-    @PostMapping("/cart/product{id}/quantity")
-    public ProductInCartDTO editQuantityOfProduct(@PathVariable int id, @RequestParam int quantity, HttpSession session) {
-        return cartService.editQuantityOfProductInCart(id, quantity, getLoggedId(session));
+    @PutMapping("/cart/products/{id}/quantity")
+    public ProductInCartDTO editQuantityOfProduct(@PathVariable int id, @RequestBody ProductQuantityDTO dto, HttpSession session) {
+        return cartService.editQuantityOfProductInCart(id, dto, getLoggedId(session));
     }
 
-    @DeleteMapping("/cart/product{id}")
+    @DeleteMapping("/cart/products/{id}")
     public String deleteProduct(@PathVariable int id, HttpSession session) {
         return cartService.removeProductFromCart(id, getLoggedId(session));
     }

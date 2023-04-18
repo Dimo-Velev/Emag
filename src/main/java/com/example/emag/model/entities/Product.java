@@ -32,6 +32,11 @@ public class Product {
 //    @NotNull
 //    @JoinColumn(name = "category_id", nullable = false)
 //    private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
 
     @Override
     public boolean equals(Object o) {
