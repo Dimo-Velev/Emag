@@ -38,6 +38,11 @@ public class ProductController extends AbstractController{
         return null;
     }
 
+    @GetMapping("/products/search")
+    public ProductViewDTO searchByName(@RequestParam String name){
+        return productService.searchByName(name);
+    }
+
 
 
 }

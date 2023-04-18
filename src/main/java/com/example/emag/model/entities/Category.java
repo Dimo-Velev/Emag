@@ -17,7 +17,7 @@ public class Category {
     @Column
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_category_id")
+    @JoinColumn(name = "parent_category_id") //TODO cascade
     private Category parentCategory;
 
 }

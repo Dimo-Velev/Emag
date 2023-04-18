@@ -2,7 +2,6 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.cart.CartContentDTO;
 import com.example.emag.model.DTOs.cart.ProductInCartDTO;
-import com.example.emag.model.DTOs.product.ProductFavoritesDTO;
 import com.example.emag.model.DTOs.product.ProductQuantityDTO;
 import com.example.emag.model.DTOs.user.UserWithCartDTO;
 import com.example.emag.model.entities.CartContent;
@@ -22,7 +21,6 @@ public class CartService extends AbstractService {
     }
 
     public ProductInCartDTO addProductToCart(int id, int userId) {
-        ifUserExists(userId);
         CartContent cartContentInDB = cartContentRepository.findByProductIdAndUserId(id, userId);
         if (cartContentInDB == null) {
             CartContentKey compositeKey = createCompositeKey(id, userId);
@@ -44,7 +42,6 @@ public class CartService extends AbstractService {
 
     public ProductInCartDTO editQuantityOfProductInCart(int id, ProductQuantityDTO dto, int userId) {
         checkIfValidQuantity(dto.getQuantity());
-        ifUserExists(userId);
         CartContent cartContent = cartContentRepository.findByProductIdAndUserId(id, userId);
         if (cartContent == null) {
             throw new NotFoundException("Product not found in cart.");

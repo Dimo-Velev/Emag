@@ -94,7 +94,7 @@ public class OrderService extends AbstractService {
             }
             product.setQuantity(product.getQuantity() - orderContent.getQuantity());
             productRepository.save(product); //updating product with the new quantity after selling the product in DB
-            orderContents.add(orderContent); //adding the contents of the order to a Set of Order contents that we gonna put to the order
+            orderContents.add(orderContent); //adding the contents of the order to a Set of Order contents that we are going to put to the order
         });
         order.setProductsInOrder(orderContents); // setting the contents to the order
         orderRepository.save(order); // saving order in DB

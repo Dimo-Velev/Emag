@@ -17,7 +17,7 @@ public class DiscountService extends AbstractService{
     private DiscountRepository discountRepository;
 
     public DiscountViewDTO viewDiscountById(int id) {
-        Discount d = getDiscountbyId(id);
+        Discount d = getDiscountById(id);
         return mapper.map(d, DiscountViewDTO.class);
     }
 
@@ -28,7 +28,7 @@ public class DiscountService extends AbstractService{
     }
 
     public DiscountViewDTO deleteDiscountById(int id) {
-        Discount d = getDiscountbyId(id);
+        Discount d = getDiscountById(id);
         DiscountViewDTO dto = mapper.map(d,DiscountViewDTO.class);
         discountRepository.deleteById(id);
         return dto;
@@ -38,9 +38,8 @@ public class DiscountService extends AbstractService{
         return discountRepository.findAll();
     }
     public DiscountViewDTO updateDiscount(int id, DiscountAddDTO dto) {
-        Discount d = getDiscountbyId(id);
+        Discount d = getDiscountById(id);
         if(dto.getExpireDate().isBefore(dto.getStartDate())){
-            System.out.println("does this even execute ?");
             throw new BadRequestException("Expiry date cannot be before start date");
         }
         d.setDiscountPercent(dto.getDiscountPercent());

@@ -24,7 +24,6 @@ public class UserController extends AbstractController{
     @PostMapping("/login")
     public UserWithoutPassDTO login(@Valid @RequestBody LoginDTO dto, HttpSession s){
         UserWithoutPassDTO respDto = userService.login(dto);
-        s.setAttribute("LOGGED", true);
         s.setAttribute("LOGGED_ID", respDto.getId());
         return respDto;
     }

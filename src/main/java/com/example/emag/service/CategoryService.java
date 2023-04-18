@@ -30,7 +30,8 @@ public class CategoryService extends AbstractService {
         return mapper.map(p, CategoryViewDTO.class);
     }
 
-    public CategoryViewDTO deleteCategoryById(int id) { //TODO update the child categories of the deleted category to set their parentCategory field to null
+    public CategoryViewDTO deleteCategoryById(int id) {
+        //TODO update the child categories of the deleted category to set their parentCategory field to null
         Category c = getCategoryById(id);
         CategoryViewDTO respDto = mapper.map(c, CategoryViewDTO.class);
         categoryRepository.deleteById(c.getId());

@@ -47,7 +47,6 @@ public class AddressService extends AbstractService {
     }
 
     public List<AddressDTO> getAllAddresses(int id) {
-        ifUserExists(id);
         return addressRepository.findAllByUserId(id)
                 .stream()
                 .map(address -> mapper.map(address, AddressDTO.class))

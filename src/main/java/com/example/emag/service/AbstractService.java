@@ -25,7 +25,6 @@ public abstract class AbstractService {
     protected CartContentRepository cartContentRepository;
     @Autowired
     protected DiscountRepository discountRepository;
-
     protected PaymentTypeRepository paymentTypeRepository;
     @Autowired
     protected AddressRepository addressRepository;
@@ -37,16 +36,9 @@ public abstract class AbstractService {
     protected User getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
     }
-    protected Discount getDiscountbyId(int id){
+    protected Discount getDiscountById(int id){
         return discountRepository.findById(id).orElseThrow(() -> new NotFoundException("Discount not found"));
 
-    }
-
-    protected boolean ifUserExists(int id) {
-        if (!userRepository.existsById(id)) {
-            throw new NotFoundException("User not found");
-        }
-        return true;
     }
 
     protected Product getProductById(int id) {
