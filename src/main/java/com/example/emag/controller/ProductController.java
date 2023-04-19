@@ -4,9 +4,12 @@ import com.example.emag.model.DTOs.product.ProductAddDTO;
 import com.example.emag.model.DTOs.product.ProductQtyChangeDTO;
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.service.ProductService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ProductController extends AbstractController{
@@ -15,8 +18,12 @@ public class ProductController extends AbstractController{
     private ProductService productService;
 
     @GetMapping("/products/{id}")
-    public ProductViewDTO viewProductById(@PathVariable int id){
+    public ProductViewDTO viewProductById(@PathVariable int id, HttpSession s){
+        if(isLogged(s)){
+            return productService.userViewProductById(id,getLoggedId(s));
+        }
         return productService.viewProductById(id);
+        //TODO check with @Aspect
     }
     @PostMapping("/products")
     public ProductViewDTO addProduct(@Valid @RequestBody ProductAddDTO p){
@@ -39,10 +46,13 @@ public class ProductController extends AbstractController{
     }
 
     @GetMapping("/products/search")
-    public ProductViewDTO searchByName(@RequestParam String name){
+    public List<ProductViewDTO> searchByName(@RequestParam String name){
         return productService.searchByName(name);
     }
 
-
+    @GetMapping("/categories/{id}/products")
+    public List<ProductViewDTO> viewAllProductsInCategoryId(@PathVariable int id){
+        return productService.viewAllProductsInCategoryId(id);
+    }
 
 }

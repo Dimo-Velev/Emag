@@ -1,24 +1,21 @@
 package com.example.emag.model.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-@Entity(name = "sellers")
-public class Seller {
+@Setter
+@Entity(name = "products_images")
+public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotNull
     @Column
-    private String name;
-    @NotNull
-    @Column
-    private String contactInfo;
-
+    private String pictureUrl;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
 }

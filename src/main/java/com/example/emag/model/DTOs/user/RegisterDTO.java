@@ -2,6 +2,7 @@ package com.example.emag.model.DTOs.user;
 
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RegisterDTO {
 
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
     @Email
     private String email;

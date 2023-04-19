@@ -26,7 +26,7 @@ public class User {
     private String email;
     @Column
     private String password;
-    @Column(name = "phone_number")
+    @Column
     private String phoneNumber;
     @Column
     private String userName;
@@ -55,4 +55,11 @@ public class User {
     private Set<CartContent> productsInCart;
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Order> orders;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_viewed_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> viewedProducts;
 }

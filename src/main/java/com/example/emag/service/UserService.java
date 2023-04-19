@@ -1,5 +1,6 @@
 package com.example.emag.service;
 
+import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.DTOs.user.*;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.UnauthorizedException;
@@ -9,7 +10,9 @@ import com.example.emag.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService extends AbstractService{
@@ -30,7 +33,6 @@ public class UserService extends AbstractService{
         userRepository.save(u);
         return mapper.map(u, UserWithoutPassDTO.class);
     }
-
 
     public UserWithoutPassDTO changePass(ChangePassDTO dto, int userId) {
         User u = getUserById(userId);
@@ -56,7 +58,6 @@ public class UserService extends AbstractService{
         return mapper.map(u,UserWithoutPassDTO.class);
     }
 
-
     public UserWithoutPassDTO viewUserInfo(int userId) {
         User u = getUserById(userId);
         return mapper.map(u,UserWithoutPassDTO.class);
@@ -64,29 +65,21 @@ public class UserService extends AbstractService{
 
     public void editUserInfo(EditProfileDTO dto, int loggedId) {
         //TODO
-        // add validation for all data
-        // throw Exceptions if provided is null
+        // check validation for DTO data
 
         User u = getUserById(loggedId);
-        if (dto.getFirstName() != null && !dto.getFirstName().equals(u.getFirstName())) {
-            u.setFirstName(dto.getFirstName());
-        }
-        if (dto.getLastName() != null && !dto.getLastName().equals(u.getLastName())) {
-            u.setLastName(dto.getLastName());
-        }
-        if (dto.getEmail() != null && !dto.getEmail().equals(u.getEmail())) {
-            u.setEmail(dto.getEmail());
-        }
-        if (dto.getPhoneNumber() != null && !dto.getPhoneNumber().equals(u.getPhoneNumber())) {
+        u.setFirstName(dto.getFirstName());
+        u.setLastName(dto.getLastName());
+        if(dto.getPhoneNumber() != null) {
             u.setPhoneNumber(dto.getPhoneNumber());
         }
-        if (dto.getUserName() != null && !dto.getUserName().equals(u.getUserName())) {
+        if (dto.getUserName() != null) {
             u.setUserName(dto.getUserName());
         }
-        if (dto.isMale() != u.isMale()) {
-            u.setMale(dto.isMale());
+        if (dto.getIsMale() != u.isMale()) {
+            u.setMale(!u.isMale());
         }
-        if (dto.getBirthdayDate() != null && !dto.getBirthdayDate().equals(u.getBirthdayDate())) {
+        if (dto.getBirthdayDate() != null) {
             u.setBirthdayDate(dto.getBirthdayDate());
         }
         userRepository.save(u);
@@ -97,5 +90,13 @@ public class UserService extends AbstractService{
         u.setSubscribed(!u.isSubscribed());
         userRepository.save(u);
     }
+
+    public List<ProductViewDTO> viewUserHistory(int userId) {
+        User u = getUserById(userId);
+        return u.getViewedProducts().stream()
+                .map(product -> mapper.map(product, ProductViewDTO.class))
+                .collect(Collectors.toList());
+    }
+
 
 }

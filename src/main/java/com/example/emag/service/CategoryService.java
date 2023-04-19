@@ -3,9 +3,14 @@ package com.example.emag.service;
 import com.example.emag.model.DTOs.category.CategoryAddDTO;
 import com.example.emag.model.DTOs.category.CategoryViewAddedDTO;
 import com.example.emag.model.DTOs.category.CategoryViewDTO;
+import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.entities.Category;
+import com.example.emag.model.entities.Product;
 import com.example.emag.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CategoryService extends AbstractService {
@@ -37,7 +42,5 @@ public class CategoryService extends AbstractService {
         categoryRepository.deleteById(c.getId());
         return respDto;
     }
-
-
 
 }

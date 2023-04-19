@@ -6,15 +6,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@Entity
-@Table(name = "details")
+@Entity(name = "details")
 public class ProductDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
-
-    @Column(name = "name", nullable = false)
+    @Column
     private String name;
 
 //    @ManyToMany(mappedBy = "details")

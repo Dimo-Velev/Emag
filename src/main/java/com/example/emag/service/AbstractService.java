@@ -20,8 +20,6 @@ public abstract class AbstractService {
     @Autowired
     protected CategoryRepository categoryRepository;
     @Autowired
-    protected ModelMapper mapper;
-    @Autowired
     protected CartContentRepository cartContentRepository;
     @Autowired
     protected DiscountRepository discountRepository;
@@ -31,6 +29,11 @@ public abstract class AbstractService {
     protected AddressRepository addressRepository;
     @Autowired
     protected OrderContentRepository orderContentRepository;
+    @Autowired
+    protected ProductImageRepository productImageRepository;
+    @Autowired
+    protected ModelMapper mapper;
+
     protected Category getCategoryById(int id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Parent category not found"));
     }
