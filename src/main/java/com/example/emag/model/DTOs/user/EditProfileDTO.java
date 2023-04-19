@@ -1,28 +1,26 @@
 package com.example.emag.model.DTOs.user;
 
-import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
 @NoArgsConstructor
 public class EditProfileDTO {
 
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
-    @Email
-    private String email;
-    @Pattern(regexp = "^\\d{10}$", message = "Incorrect phone number format")
+    @Pattern(regexp = "^\\d{10}$", message = "Incorrect phone number format") //must be 10 digits
     private String phoneNumber;
     private String userName;
-    private boolean isMale;
+    private Boolean isMale;
     private LocalDate birthdayDate;
-    private boolean isSubscribed;
 
 }

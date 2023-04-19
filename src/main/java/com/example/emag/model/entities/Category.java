@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @Entity(name = "categories")
@@ -17,7 +19,7 @@ public class Category {
     @Column
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_category_id") //TODO cascade
+    @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
 
 }

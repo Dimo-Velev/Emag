@@ -22,6 +22,9 @@ public class DiscountService extends AbstractService{
     }
 
     public DiscountViewDTO addDiscount(DiscountAddDTO d) {
+        if(d.getExpireDate().isBefore(d.getStartDate())){
+            throw new BadRequestException("Expiry date cannot be before start date");
+        }
         Discount discount = mapper.map(d,Discount.class);
         discountRepository.save(discount);
         return mapper.map(discount,DiscountViewDTO.class);

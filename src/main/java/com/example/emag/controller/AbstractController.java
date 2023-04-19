@@ -1,9 +1,7 @@
 package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.ErrorDTO;
-import com.example.emag.model.exceptions.BadRequestException;
-import com.example.emag.model.exceptions.NotFoundException;
-import com.example.emag.model.exceptions.UnauthorizedException;
+import com.example.emag.model.exceptions.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -54,17 +52,27 @@ public abstract class AbstractController {
     }
 
 
-    protected int getLoggedId(HttpSession s) {
-        isLogged(s);
-        return (int) s.getAttribute("LOGGED_ID");
-    }
+//    protected int getLoggedId(HttpSession s) {
+//        isLogged(s);
+//        return (int) s.getAttribute("LOGGED_ID");
+//    }
+//    protected boolean isLogged(HttpSession s) {
+//        if (s.getAttribute("LOGGED_ID") == null) {
+//            throw new UnauthorizedException("You have to lo gin first");
+//        }
+//        return true;
+//    }
 
-    protected boolean isLogged(HttpSession s) {
-        if (s.getAttribute("LOGGED_ID") == null) {
+    protected int getLoggedId(HttpSession s){
+        if(!isLogged(s)){
             throw new UnauthorizedException("You have to login first");
         }
-        return true;
+        return (int) s.getAttribute("LOGGED_ID");
     }
+    protected boolean isLogged(HttpSession s) {
+        return s.getAttribute("LOGGED_ID") != null;
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorDTO handleValidationExceptions(MethodArgumentNotValidException ex) {
