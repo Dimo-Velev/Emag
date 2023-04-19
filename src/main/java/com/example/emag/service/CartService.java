@@ -8,6 +8,7 @@ import com.example.emag.model.entities.CartContentKey;
 import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.BadRequestException;
+import com.example.emag.model.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class CartService extends AbstractService {
 
     public CartContentDTO getCartContent(int id) {
         Set<CartContent> cart = getUserById(id).getProductsInCart();
+        if (cart.isEmpty()) {
+            throw new BadRequestException("Cart is empty");
+        }
         double totalPrice = 0.0;
         for (CartContent cartContent : cart) {
             totalPrice += cartContent.getProduct().getPrice() * cartContent.getQuantity();
@@ -51,7 +55,7 @@ public class CartService extends AbstractService {
             CartContent cartContent = cartContentInDB.get();
             cartContent.setQuantity(cartContent.getQuantity() + 1);
             if (cartContent.getProduct().getQuantity() < cartContent.getQuantity()) {
-                throw new BadRequestException("We don't have that much quantity of that product.");
+                throw new NotFoundException("We don't have that much quantity of that product.");
             }
             cartContentRepository.save(cartContent);
             return createDTO(cartContent);
@@ -66,12 +70,21 @@ public class CartService extends AbstractService {
 
     public ProductInCartDTO editQuantityOfProductInCart(int id, ProductQuantityDTO dto, int userId) {
         checkIfValidQuantity(dto.getQuantity());
-        CartContent cartContent = cartContentRepository.findByProductIdAndUserId(id, userId).orElseThrow(() -> new BadRequestException("Cart is empty."));
+        CartContent cartContent = cartContentRepository.findByProductIdAndUserId(id, userId).orElseThrow(
+                () -> new BadRequestException("That products is not in your cart."));
+        Product productInDb = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found in our shop."));
+        if (productInDb.getQuantity() < dto.getQuantity()) {
+            throw new NotFoundException("We don't have that much quantity in of that product.");
+        }
         cartContent.setQuantity(dto.getQuantity());
         ProductInCartDTO product = new ProductInCartDTO();
-        product.setPrice(getProductPrice(cartContent.getProduct().getId()));
+        product.setPrice((cartContent.getProduct().getId()));
         product.setName(cartContent.getProduct().getName());
         product.setQuantity(dto.getQuantity());
+        if(productInDb.getDiscount() != null){
+            product.setDiscount(productInDb.getDiscount().getDiscountPercent()+ "%");
+        }
+        product.setDiscount("No discount for this product.");
         cartContentRepository.save(cartContent);
         return product;
     }

@@ -1,11 +1,11 @@
 package com.example.emag.model.DTOs.address;
 
-
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Range;
 
 @Setter
 @Getter
@@ -20,7 +20,8 @@ public class AddressDTO {
     private String address;
     @Pattern(regexp = "^(?:[a-zA-Z0-9\\s]+|[\\u0410-\\u044F0-9\\s]+)$", message = "Residential area must contain only letters,digits,and whitespaces.")
     private String residentialArea;
-    @Range(min = 0, max = 30,message = "Not a valid building floor.")
+    @Min(value = 0, message = "Not a valid building floor, needs to be between 0 and 30.")
+    @Max(value = 30, message = "Not a valid building floor, needs to be between 0 and 30.")
     private int floor;
 
 }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
 
 @Setter
@@ -31,7 +32,8 @@ public class Product {
     @NotNull
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<Review> reviews;
 
     @Override
     public boolean equals(Object o) {

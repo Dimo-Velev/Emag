@@ -45,13 +45,4 @@ public abstract class AbstractService {
     protected Product getProductById(int id) {
         return productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found."));
     }
-
-    protected double getProductPrice(int id) {
-        Product product = getProductById(id);
-        if (product.getDiscount() != null) {
-            return product.getPrice() - (product.getPrice() * product.getDiscount().getDiscountPercent());
-        } else {
-            return product.getPrice();
-        }
-    }
 }

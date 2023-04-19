@@ -5,7 +5,6 @@ import com.example.emag.model.DTOs.order.CreatedOrderDTO;
 import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
 import com.example.emag.model.DTOs.order.CreateOrderDTO;
 import com.example.emag.model.DTOs.orderContent.OrderContentDTO;
-import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.entities.*;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
@@ -80,13 +79,16 @@ public class OrderService extends AbstractService {
                     orderDto.setQuantity(orderContent.getQuantity());
                     return orderDto;
                 })
-                .collect(Collectors.toList()));
+                .collect(Collectors.toSet()));
         dtoOrder.setTotalPrice(order.getPrice());
         return dtoOrder;
     }
 
     private Set<CartContent> getProductsFromCart(User user) {
-        cartContentRepository.findByUserId(user.getId()).orElseThrow(() -> new BadRequestException("The cart is empty."));
+        Set<CartContent> cartContents = cartContentRepository.findByUserId(user.getId());
+        if (cartContents.isEmpty()) {
+            throw new BadRequestException("Cart is empty");
+        }
         Set<CartContent> productsInCart = user.getProductsInCart();
         checkEachProductQuantityInDB(productsInCart);
         productsInCart.forEach(cartContent -> cartContentRepository.deleteById(cartContent.getId()));

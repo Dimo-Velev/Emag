@@ -53,6 +53,15 @@ public class User {
     private Set<Product> favoriteProducts;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<CartContent> productsInCart;
-    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Review> reviews;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "reviews_have_likes",
+            joinColumns = @JoinColumn(name = "review_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<Review> likes;
 }

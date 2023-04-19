@@ -2,7 +2,6 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.address.AddressDTO;
 import com.example.emag.model.entities.Address;
-import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.AddressRepository;
@@ -25,8 +24,8 @@ public class AddressService extends AbstractService {
         return dto;
     }
 
-    public AddressDTO editAddress(AddressDTO dto, int id) {
-        Address address = addressRepository.findById(id).orElseThrow(() -> new NotFoundException("Address not found"));
+    public AddressDTO editAddress(AddressDTO dto, int id, int userId) {
+        Address address = addressRepository.findByIdAndUserId(id,userId).orElseThrow(() -> new NotFoundException("Address not found"));
         if (!dto.getName().equals(address.getName())) {
             address.setAddress(dto.getAddress());
         }

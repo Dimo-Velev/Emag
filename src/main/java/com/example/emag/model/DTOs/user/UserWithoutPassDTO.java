@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class UserWithoutPassDTO {
+
     private int id;
     private String firstName;
     private String lastName;
@@ -26,5 +27,4 @@ public class UserWithoutPassDTO {
     private LocalDate birthdayDate;
     private LocalDateTime createdAt;
     private boolean isSubscribed;
-
 }

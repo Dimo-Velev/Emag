@@ -6,12 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CartContentRepository extends JpaRepository<CartContent, CartContentKey> {
 
     Optional<CartContent> findByProductIdAndUserId(int id, int userId);
-    Optional<CartContent> findByUserId(int id);
-    Optional<CartContent> findAllByUserId(int id);
+    Set<CartContent> findByUserId(int id);
     Optional<CartContent> deleteAllByUserId(int id);
 }

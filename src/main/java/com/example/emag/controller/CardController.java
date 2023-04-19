@@ -27,8 +27,9 @@ public class CardController extends AbstractController {
         return cardService.addCard(dto, getLoggedId(session));
     }
 
-    @DeleteMapping("/cards/{id}")
-    public String delete(@PathVariable int id, HttpSession session) {
+
+    @DeleteMapping("/cards/{id:\\d+}")
+    public String delete(@Valid @PathVariable int id, HttpSession session) {
         cardService.deleteCard(id, getLoggedId(session));
         return "Card is deleted";
     }

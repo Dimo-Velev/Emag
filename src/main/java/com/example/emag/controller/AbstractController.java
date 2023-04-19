@@ -37,14 +37,15 @@ public abstract class AbstractController {
     public ErrorDTO handleNotFound(Exception e) {
         return generateErrorDTO(e, HttpStatus.NOT_FOUND);
     }
-
+    
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleRest(Exception e) {
         return generateErrorDTO(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ErrorDTO generateErrorDTO(Exception e, HttpStatus s){
+
+    private ErrorDTO generateErrorDTO(Exception e, HttpStatus s) {
         return ErrorDTO.builder()
                 .msg(e.getMessage())
                 .time(LocalDateTime.now())
@@ -83,7 +84,8 @@ public abstract class AbstractController {
                 .status(status.value())
                 .build();
     }
-    protected boolean isLoggedAdmin(HttpSession session){
+
+    protected boolean isLoggedAdmin(HttpSession session) {
         //TODO
         isLogged(session);
         return false;

@@ -20,10 +20,9 @@ public class AddressController extends AbstractController {
         return addressService.addAddress(dto, getLoggedId(session));
     }
 
-    @PutMapping("/addresses/{id}")
-    public AddressDTO edit(@Valid @RequestBody AddressDTO dto,@PathVariable int id, HttpSession session) {
-        isLogged(session);
-        return addressService.editAddress(dto, id);
+    @PutMapping("/addresses/{id:\\d+}")
+    public AddressDTO edit(@Valid @RequestBody AddressDTO dto,@Valid @PathVariable int id, HttpSession session) {
+        return addressService.editAddress(dto, id,getLoggedId(session));
     }
 
     @GetMapping("/addresses")
