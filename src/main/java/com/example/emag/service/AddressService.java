@@ -2,6 +2,7 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.address.AddressDTO;
 import com.example.emag.model.entities.Address;
+import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.AddressRepository;

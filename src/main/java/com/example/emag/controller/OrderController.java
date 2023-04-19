@@ -2,7 +2,7 @@ package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.order.CreatedOrderDTO;
 import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
-import com.example.emag.model.DTOs.product.ProductPaymentDTO;
+import com.example.emag.model.DTOs.order.CreateOrderDTO;
 import com.example.emag.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class OrderController extends AbstractController{
         return orderService.cancelOrderById(id,getLoggedId(session));
     }
     @PostMapping("/orders")
-    public CreatedOrderDTO create(@RequestBody ProductPaymentDTO dto, HttpSession session){
+    public CreatedOrderDTO create(@RequestBody CreateOrderDTO dto, HttpSession session){
         return orderService.createOrder(dto,getLoggedId(session));
     }
 }

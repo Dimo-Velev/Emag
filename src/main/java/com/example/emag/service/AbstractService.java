@@ -25,6 +25,7 @@ public abstract class AbstractService {
     protected CartContentRepository cartContentRepository;
     @Autowired
     protected DiscountRepository discountRepository;
+    @Autowired
     protected PaymentTypeRepository paymentTypeRepository;
     @Autowired
     protected AddressRepository addressRepository;

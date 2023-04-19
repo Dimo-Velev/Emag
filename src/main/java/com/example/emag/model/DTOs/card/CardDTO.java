@@ -1,7 +1,6 @@
 package com.example.emag.model.DTOs.card;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +19,9 @@ public class CardDTO {
     private String cardNumber;
     @Range(min = 1, max = 12, message = "Not a valid month, months are between 1 and 12")
     private int expireMonth;
-    @Pattern(regexp = "^20[2-9][3-9]$", message = "Not a valid year, must be between 2029 and 2099.")
+    @Range(min = 2023, max = 2099, message = "Not a valid year, must be between 2023 and 2099.")
     private int expireYear;
-    @Pattern(regexp = "^[0-9]{3,4}$", message = "CVV code must be a 3 or 4-digit number")
+    @Digits(integer = 3, fraction = 0, message = "CVV code must be a 3 or 4-digit number")
     private int cvvCode;
     @Pattern(regexp = "^[A-Z]+ [A-Z]+$", message = "Not a valid name, Name must be first and last all capital letters, separated by space.")
     private String name;

@@ -43,7 +43,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Card> cards;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Card> addresses;
+    private List<Address> addresses;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "favorite_products",
@@ -53,4 +53,6 @@ public class User {
     private Set<Product> favoriteProducts;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<CartContent> productsInCart;
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Order> orders;
 }

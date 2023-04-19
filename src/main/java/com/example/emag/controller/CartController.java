@@ -6,6 +6,7 @@ import com.example.emag.model.DTOs.product.ProductQuantityDTO;
 import com.example.emag.service.CartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,7 +23,7 @@ public class CartController extends AbstractController {
 
     @PostMapping("/cart/products/{id}")
     public ProductInCartDTO addProduct(@PathVariable int id, HttpSession session) {
-        return cartService.addProductToCart(id,getLoggedId(session));
+        return cartService.addProductToCart(id, getLoggedId(session));
     }
 
     @PutMapping("/cart/products/{id}/quantity")
@@ -31,7 +32,13 @@ public class CartController extends AbstractController {
     }
 
     @DeleteMapping("/cart/products/{id}")
-    public String deleteProduct(@PathVariable int id, HttpSession session) {
+    public String removeProduct(@PathVariable int id, HttpSession session) {
         return cartService.removeProductFromCart(id, getLoggedId(session));
+    }
+
+    @DeleteMapping("/cart")
+    public ResponseEntity<String> removeAllProducts(HttpSession session) {
+        String message = cartService.removeAllProductsFromCart(getLoggedId(session));
+        return ResponseEntity.ok(message);
     }
 }

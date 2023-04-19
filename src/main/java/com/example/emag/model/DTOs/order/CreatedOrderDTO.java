@@ -1,6 +1,8 @@
 package com.example.emag.model.DTOs.order;
 
 
+import com.example.emag.model.DTOs.address.OrderAddressDTO;
+import com.example.emag.model.DTOs.orderContent.OrderContentDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,8 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 public class CreatedOrderDTO {
 
-    private List<ProductOrderDTO> products;
+    private List<OrderContentDTO> products;
     private String name;
     private LocalDateTime createdAt;
     private double totalPrice;
+    private OrderAddressDTO address;
 }

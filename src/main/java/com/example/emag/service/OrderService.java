@@ -1,8 +1,11 @@
 package com.example.emag.service;
 
+import com.example.emag.model.DTOs.address.OrderAddressDTO;
 import com.example.emag.model.DTOs.order.CreatedOrderDTO;
 import com.example.emag.model.DTOs.order.OrderWithFewInfoDTO;
-import com.example.emag.model.DTOs.product.ProductPaymentDTO;
+import com.example.emag.model.DTOs.order.CreateOrderDTO;
+import com.example.emag.model.DTOs.orderContent.OrderContentDTO;
+import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.entities.*;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
@@ -58,54 +61,80 @@ public class OrderService extends AbstractService {
     }
 
     @Transactional
-    public CreatedOrderDTO createOrder(ProductPaymentDTO dto, int userId) {
-        PaymentType paymentType = paymentTypeRepository.findById(dto.getPaymentId()).orElseThrow(() -> new BadRequestException("That payment type doesn't exist."));
-        Set<CartContent> products = getProductsFromCart(userId);
-        Order order = createNewOrder(products, getUserById(userId), paymentType);
-        return mapper.map(order, CreatedOrderDTO.class);
+    public CreatedOrderDTO createOrder(CreateOrderDTO dto, int userId) {
+        User user = getUserById(userId);
+        PaymentType paymentType = paymentTypeRepository.findById(dto.getPaymentId()).
+                orElseThrow(() -> new BadRequestException("That payment type doesn't exist."));
+        Address address = user.getAddresses().stream().filter(address1 -> address1.getId() == dto.getAddressId()).findAny().orElseThrow(() ->
+                new BadRequestException("That address doesn't exist in your addresses."));
+        Set<CartContent> products = getProductsFromCart(user);
+        Order order = createNewOrder(products, user, paymentType, address);
+        CreatedOrderDTO dtoOrder = new CreatedOrderDTO();
+        dtoOrder.setName("Bill" + order.getId());
+        dtoOrder.setCreatedAt(order.getCreatedAt());
+        dtoOrder.setAddress(mapper.map(order.getAddress(), OrderAddressDTO.class));
+        dtoOrder.setProducts(order.getProductsInOrder().stream()
+                .map(orderContent -> {
+                    OrderContentDTO orderDto = new OrderContentDTO();
+                    orderDto.setName(orderContent.getProduct().getName());
+                    orderDto.setQuantity(orderContent.getQuantity());
+                    return orderDto;
+                })
+                .collect(Collectors.toList()));
+        dtoOrder.setTotalPrice(order.getPrice());
+        return dtoOrder;
     }
 
-    private Set<CartContent> getProductsFromCart(int id) {
-        checkIfCartIsEmpty(id);
-        User user = getUserById(id);
+    private Set<CartContent> getProductsFromCart(User user) {
+        cartContentRepository.findByUserId(user.getId()).orElseThrow(() -> new BadRequestException("The cart is empty."));
         Set<CartContent> productsInCart = user.getProductsInCart();
+        checkEachProductQuantityInDB(productsInCart);
         productsInCart.forEach(cartContent -> cartContentRepository.deleteById(cartContent.getId()));
         return productsInCart;
     }
 
-    private Order createNewOrder(Set<CartContent> products, User user, PaymentType paymentType) {
+    private void checkEachProductQuantityInDB(Set<CartContent> productsInCart) {
+        productsInCart.forEach(cartContent -> {
+            Product product = productRepository.findById(cartContent.getProduct().getId()).orElseThrow(
+                    () -> new BadRequestException("Product not found." + cartContent.getProduct().getName()));
+            if (product.getQuantity() < cartContent.getQuantity()) {
+                throw new BadRequestException("Not enough quantity of " + product.getName());
+            }
+        });
+    }
+
+    private Order createNewOrder(Set<CartContent> products, User user, PaymentType paymentType, Address address) {
         Order order = new Order();
         order.setPrice(calculatePrice(products)); //calculating the price in private method, checking if there is discount per product and summing total price
         order.setUser(user); // adding user to the order
         order.setPaymentType(paymentType); // setting payment type, which we have in the DB from the start
+        order.setAddress(address); // setting the address for delivery
         Set<OrderContent> orderContents = new HashSet<>(); //creating new Set of Order contents that we are going fill up later
+        Set<Product> editedQuantityProducts = new HashSet<>();
         //Setting status to the order, which we have from the beginning in the DB
         order.setStatus(orderStatusRepository.findById(1).orElseThrow(() -> new BadRequestException("This should never happen.")));
+        orderRepository.save(order);
         //Foreach to map cart content to order content
         products.forEach(cartContent -> {
-            OrderContent orderContent = mapper.map(cartContent, OrderContent.class);
-            //Saving each orderContent in DB
-            orderContentRepository.save(orderContent);
+            OrderContentKey key = new OrderContentKey();
+            OrderContent orderContent = new OrderContent();
+            orderContent.setOrder(order);
+            orderContent.setProduct(cartContent.getProduct());
+            orderContent.setQuantity(cartContent.getQuantity());
+            key.setProductId(cartContent.getProduct().getId());
+            key.setOrderId(order.getId());
+            orderContent.setId(key);
             //Finding the product IDs to check if every product has enough quantity
             Product product = productRepository.findById(orderContent.getProduct().getId()).orElseThrow(
                     () -> new BadRequestException("Product not found." + orderContent.getProduct().getName()));
-            if (product.getQuantity() < orderContent.getQuantity()) { //checking if enough quantity of product IN DB
-                throw new BadRequestException("Not enough quantity of " + product.getName());
-            }
             product.setQuantity(product.getQuantity() - orderContent.getQuantity());
-            productRepository.save(product); //updating product with the new quantity after selling the product in DB
+            editedQuantityProducts.add(product); // adding products in set to save them all later in DB
             orderContents.add(orderContent); //adding the contents of the order to a Set of Order contents that we are going to put to the order
         });
         order.setProductsInOrder(orderContents); // setting the contents to the order
-        orderRepository.save(order); // saving order in DB
+        productRepository.saveAll(editedQuantityProducts);
+        orderContentRepository.saveAll(orderContents);
         return order;
-    }
-
-    private void checkIfCartIsEmpty(int id) {
-        CartContent cartContent = cartContentRepository.findByUserId(id);
-        if (cartContent == null) {
-            throw new BadRequestException("Cart is empty");
-        }
     }
 
     private double calculatePrice(Set<CartContent> products) {
