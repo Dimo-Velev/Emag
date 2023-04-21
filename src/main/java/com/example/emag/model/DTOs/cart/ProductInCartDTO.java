@@ -9,8 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductInCartDTO {
 
+    private int id;
     private String name;
     private int quantity;
     private double price;
-    private String discount;
+    private int discount;
 }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OrderWithFewInfoDTO {
 
+    private int id;
     private double price;
     private LocalDateTime createdAt;
     private OrderStatus orderStatus;

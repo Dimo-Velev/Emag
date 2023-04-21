@@ -22,6 +22,7 @@ public class AddressDTO {
     private String residentialArea;
     @Min(value = 0, message = "Not a valid building floor, needs to be between 0 and 30.")
     @Max(value = 30, message = "Not a valid building floor, needs to be between 0 and 30.")
-    private int floor;
+    @Pattern(regexp = ".*\\d+.*", message = "Floor needs to be a digit.")
+    private String floor;
 
 }

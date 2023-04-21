@@ -32,7 +32,6 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Review> reviews;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

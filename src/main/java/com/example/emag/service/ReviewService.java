@@ -5,6 +5,7 @@ import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.Review;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.NotFoundException;
+import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,18 +20,34 @@ public class ReviewService extends AbstractService {
     private ReviewRepository reviewRepository;
 
     public ReviewWithFewInfoDTO createReviewForProduct(CreateReviewDTO dto, int id, int userId) {
-        productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found."));
+        Product product = getProductById(id);
         Review review = mapper.map(dto, Review.class);
         review.setIsApproved(0);
-        review.setUser(getUserById(id));
-        review.setProduct(productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found.")));
+        review.setUser(getUserById(userId));
+        review.setProduct(product);
         reviewRepository.save(review);
         return mapper.map(review, ReviewWithFewInfoDTO.class);
     }
 
-    public List<ReviewWithoutPicDTO> viewAllReviewsForProduct(int id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
-        return product.getReviews().stream()
+    public List<ReviewWithoutPicDTO> viewAllReviewsForProduct(int id, String rating, String sort) {
+        Product product = getProductById(id);
+        List<Review> reviews = product.getReviews();
+        if (!rating.isEmpty()) {
+            reviews = reviews.stream()
+                    .filter(reviewWithoutPicDTO -> reviewWithoutPicDTO.getRating() == Integer.parseInt(rating))
+                    .toList();
+        }
+        if (sort.equals("most-Popular")) {
+            reviews = reviews.stream()
+                    .sorted((r1, r2) -> r2.getLikedBy().size() - r1.getLikedBy().size())
+                    .toList();
+        }
+        if (sort.equals("newest")) {
+            reviews = reviews.stream()
+                    .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                    .toList();
+        }
+        return reviews.stream()
                 .filter(review -> review.getIsApproved() == 1)
                 .map(review -> mapper.map(review, ReviewWithoutPicDTO.class))
                 .toList();
@@ -54,9 +71,9 @@ public class ReviewService extends AbstractService {
 
     public LikedReviewDTO reactOnReview(int id, int userId) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new NotFoundException("Review not found."));
-        User user = getUserById(id);
+        User user = getUserById(userId);
         Set<Review> likesList = user.getLikes();
-        LikedReviewDTO dto = mapper.map(review,LikedReviewDTO.class);
+        LikedReviewDTO dto = mapper.map(review, LikedReviewDTO.class);
         if (likesList.stream().filter(review1 -> review1.getId() == review.getId()).findFirst().isEmpty()) {
             likesList.add(review);
             dto.setMessage("Review liked.");
@@ -67,4 +84,20 @@ public class ReviewService extends AbstractService {
         userRepository.save(user);
         return dto;
     }
+
+    public void deleteReview(int id, int userId) {
+        User user = getUserById(userId);
+        Review review = getReviewById(id);
+        if (!user.isAdmin() || userId != review.getUser().getId()) {
+            throw new UnauthorizedException("User is not authorized to delete this review.");
+        }
+        reviewRepository.delete(review);
+    }
+
+    public void approveReview(int id) {
+        Review review = getReviewById(id);
+        review.setIsApproved(1);
+        reviewRepository.save(review);
+    }
 }
+

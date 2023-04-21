@@ -2,7 +2,10 @@ package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.ErrorDTO;
 import com.example.emag.model.exceptions.*;
+import com.example.emag.service.MediaService;
+import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +21,10 @@ import java.util.Map;
 @RestController
 public abstract class AbstractController {
 
+    @Autowired
+    protected MediaService mediaService;
+    @Autowired
+    protected UserService userService;
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleBadRequest(Exception e) {
@@ -35,7 +42,7 @@ public abstract class AbstractController {
     public ErrorDTO handleNotFound(Exception e) {
         return generateErrorDTO(e, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleRest(Exception e) {
@@ -94,8 +101,7 @@ public abstract class AbstractController {
     }
 
     protected boolean isLoggedAdmin(HttpSession session) {
-        //TODO
-        isLogged(session);
+        userService.isAdmin(getLoggedId(session));
         return false;
     }
 }
