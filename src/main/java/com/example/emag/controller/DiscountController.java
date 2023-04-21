@@ -7,9 +7,10 @@ import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.service.DiscountService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 public class DiscountController extends AbstractController{
@@ -39,8 +40,8 @@ public class DiscountController extends AbstractController{
     }
 
     @GetMapping("/discounts")
-    public List<DiscountViewDTO> getAllDiscounts() {
-        return discountService.getAllDiscounts();
+    public Page<DiscountViewDTO> getAllDiscounts(Pageable pageable) {
+        return discountService.getAllDiscounts(pageable);
     }
 
 

@@ -10,11 +10,11 @@ import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.repositories.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DiscountService extends AbstractService{
@@ -51,10 +51,12 @@ public class DiscountService extends AbstractService{
         return dto;
     }
 
-    public List<DiscountViewDTO> getAllDiscounts() {
-        return discountRepository.findAll().stream()
-                .map(discount -> mapper.map(discount,DiscountViewDTO.class))
-                .collect(Collectors.toList());
+    public Page<DiscountViewDTO> getAllDiscounts(Pageable pageable) {
+        Page<Discount> discountPage = discountRepository.findAll(pageable);
+        if (discountPage.isEmpty()) {
+            throw new NotFoundException("No discounts were found");
+        }
+        return discountPage.map(discount -> mapper.map(discount, DiscountViewDTO.class));
     }
     public DiscountViewDTO updateDiscount(int id, DiscountAddDTO dto) {
         Discount d = getDiscountById(id);

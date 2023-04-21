@@ -6,9 +6,10 @@ import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 public class UserController extends AbstractController{
@@ -46,9 +47,9 @@ public class UserController extends AbstractController{
     }
 
     @GetMapping("/history")
-    public List<ProductViewDTO> viewUserHistory(HttpSession s){
+    public Page<ProductViewDTO> viewUserHistory(HttpSession s, Pageable pageable){
         int userId = getLoggedId(s);
-        return userService.viewUserHistory(userId);
+        return userService.viewUserHistory(userId, pageable);
     }
 //    @Role()
 //    @Secured({"admin"})
