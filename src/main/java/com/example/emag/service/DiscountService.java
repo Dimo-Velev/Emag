@@ -1,20 +1,31 @@
 package com.example.emag.service;
 
 import com.example.emag.model.DTOs.discount.DiscountAddDTO;
+import com.example.emag.model.DTOs.discount.DiscountAddToProductDTO;
 import com.example.emag.model.DTOs.discount.DiscountViewDTO;
+import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.entities.Discount;
+import com.example.emag.model.entities.Product;
 import com.example.emag.model.exceptions.BadRequestException;
+import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.repositories.DiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DiscountService extends AbstractService{
 
     @Autowired
     private DiscountRepository discountRepository;
+
+
+    protected Discount getDiscountById(int id){
+        return discountRepository.findById(id).orElseThrow(() -> new NotFoundException("Discount not found"));
+    }
 
     public DiscountViewDTO viewDiscountById(int id) {
         Discount d = getDiscountById(id);
@@ -24,6 +35,9 @@ public class DiscountService extends AbstractService{
     public DiscountViewDTO addDiscount(DiscountAddDTO d) {
         if(d.getExpireDate().isBefore(d.getStartDate())){
             throw new BadRequestException("Expiry date cannot be before start date");
+        }
+        if(d.getExpireDate().isBefore(LocalDateTime.now())){
+            throw new BadRequestException("Expiry date cannot be before today");
         }
         Discount discount = mapper.map(d,Discount.class);
         discountRepository.save(discount);
@@ -37,8 +51,10 @@ public class DiscountService extends AbstractService{
         return dto;
     }
 
-    public List<Discount> getAllDiscounts() {
-        return discountRepository.findAll();
+    public List<DiscountViewDTO> getAllDiscounts() {
+        return discountRepository.findAll().stream()
+                .map(discount -> mapper.map(discount,DiscountViewDTO.class))
+                .collect(Collectors.toList());
     }
     public DiscountViewDTO updateDiscount(int id, DiscountAddDTO dto) {
         Discount d = getDiscountById(id);
@@ -51,6 +67,19 @@ public class DiscountService extends AbstractService{
         discountRepository.save(d);
         return mapper.map(d, DiscountViewDTO.class);
     }
+
+
+    public ProductViewDTO addDiscountToProduct(DiscountAddToProductDTO dto) {
+        Discount d = getDiscountById(dto.getDiscountId());
+        Product p = getProductById(dto.getProductId());
+        if(d.getExpireDate().isBefore(LocalDateTime.now())){
+            throw new BadRequestException("Provided discount is expired");
+        }
+        p.setDiscount(d);
+        productRepository.save(p);
+        return mapper.map(p,ProductViewDTO.class);
+    }
+
 
 
 

@@ -4,6 +4,7 @@ import com.example.emag.model.DTOs.ErrorDTO;
 import com.example.emag.model.exceptions.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,12 @@ public abstract class AbstractController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDTO handleNotFound(Exception e) {
         return generateErrorDTO(e, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDTO handleNotReadable(Exception e) {
+        return generateErrorDTO(e, HttpStatus.BAD_REQUEST);
     }
     
     @ExceptionHandler(Exception.class)

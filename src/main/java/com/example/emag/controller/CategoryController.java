@@ -19,12 +19,12 @@ public class CategoryController extends AbstractController{
         return categoryService.addCategory(c);
     }
 
-    @GetMapping("/categories/{id}")
+    @GetMapping("/categories/{id:\\d+}")
     public CategoryViewDTO viewCategoryById(@PathVariable int id){
         return categoryService.viewCategoryById(id);
     }
 
-    @DeleteMapping("/categories/{id}")
+    @DeleteMapping("/categories/{id:\\d+}")
     public CategoryViewDTO deleteCategoryById(@PathVariable int id){
         return categoryService.deleteCategoryById(id);
     }

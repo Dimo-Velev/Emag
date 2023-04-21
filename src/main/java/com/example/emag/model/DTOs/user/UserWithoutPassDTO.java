@@ -18,9 +18,7 @@ public class UserWithoutPassDTO {
     private int id;
     private String firstName;
     private String lastName;
-    @Email
     private String email;
-    @Pattern(regexp = "^\\d{10}$", message = "Incorrect phone number format")
     private String phoneNumber;
     private String userName;
     private boolean isMale;

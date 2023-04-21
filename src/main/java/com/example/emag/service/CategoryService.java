@@ -3,17 +3,17 @@ package com.example.emag.service;
 import com.example.emag.model.DTOs.category.CategoryAddDTO;
 import com.example.emag.model.DTOs.category.CategoryViewAddedDTO;
 import com.example.emag.model.DTOs.category.CategoryViewDTO;
-import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.entities.Category;
-import com.example.emag.model.entities.Product;
 import com.example.emag.model.exceptions.BadRequestException;
+import com.example.emag.model.exceptions.NotFoundException;
+import com.example.emag.model.repositories.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CategoryService extends AbstractService {
+    @Autowired
+    protected CategoryRepository categoryRepository;
 
     public CategoryViewAddedDTO addCategory(CategoryAddDTO dto) {
         if(categoryRepository.existsByNameIgnoreCase(dto.getName())){
@@ -21,7 +21,9 @@ public class CategoryService extends AbstractService {
         }
         Category c = new Category();
         if(dto.getParentCategoryId() != 0){
-            Category parent = getCategoryById(dto.getParentCategoryId());
+            Category parent = categoryRepository
+                    .findById(dto.getParentCategoryId())
+                    .orElseThrow(() -> new NotFoundException("Parent category not found"));
             c.setParentCategory(parent);
         }
         c.setName(dto.getName());

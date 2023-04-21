@@ -17,28 +17,27 @@ public class ProductController extends AbstractController{
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/products/{id:\\d+}")
     public ProductViewDTO viewProductById(@PathVariable int id, HttpSession s){
         if(isLogged(s)){
             return productService.userViewProductById(id,getLoggedId(s));
         }
         return productService.viewProductById(id);
-        //TODO check with @Aspect
     }
     @PostMapping("/products")
     public ProductViewDTO addProduct(@Valid @RequestBody ProductAddDTO p){
         return productService.addProduct(p);
     }
-    @DeleteMapping("products/{id}")
+    @DeleteMapping("products/{id:\\d+}")
     public ProductViewDTO deleteProductById(@PathVariable int id) {
         return productService.deleteProductById(id);
     }
-    @PutMapping("/products/{id}/quantity")
+    @PutMapping("/products/{id:\\d+}/quantity")
     public ProductViewDTO changeProductQty(@Valid @PathVariable int id, @RequestBody ProductQtyChangeDTO dto) {
         return productService.changeProductQty(id,dto.getQuantity());
     }
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/products/{id:\\d+}")
     public ProductViewDTO editProductDetails(@PathVariable int id){
 //        return productService.editProductDetails(id);
         //TODO
@@ -50,9 +49,9 @@ public class ProductController extends AbstractController{
         return productService.searchByName(name);
     }
 
-    @GetMapping("/categories/{id}/products")
-    public List<ProductViewDTO> viewAllProductsInCategoryId(@PathVariable int id){
-        return productService.viewAllProductsInCategoryId(id);
+    @GetMapping("/categories/{id:\\d+}/products")
+    public List<ProductViewDTO> viewAllProductsByCategoryId(@PathVariable int id){
+        return productService.viewAllProductsByCategoryId(id);
     }
 
 }

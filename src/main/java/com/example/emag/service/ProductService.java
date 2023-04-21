@@ -57,7 +57,7 @@ public class ProductService extends AbstractService{
                 .collect(Collectors.toList());
     }
 
-    public List<ProductViewDTO> viewAllProductsInCategoryId(int id) {
+    public List<ProductViewDTO> viewAllProductsByCategoryId(int id) {
         List<Product> products = productRepository.findAllByCategoryId(id);
         if(products.isEmpty()){
             throw new NotFoundException("No products were found in this category");

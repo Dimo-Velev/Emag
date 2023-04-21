@@ -2,13 +2,10 @@ package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.DTOs.user.*;
-import com.example.emag.model.entities.Product;
 import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
