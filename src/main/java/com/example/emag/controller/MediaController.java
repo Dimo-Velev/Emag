@@ -20,17 +20,17 @@ public class MediaController extends AbstractController{
 
     @PostMapping("/media/products/{id:\\d+}")
     public ProductImageDTO uploadProductImage(@RequestParam("file") MultipartFile file,
-                                              @PathVariable int id){
-        if(file.isEmpty()){
+                                              @PathVariable int id) {
+        if (file.isEmpty()) {
             throw new BadRequestException("File is empty");
         }
-        if (file.getSize() > 5 * 1024 * 1024){
+        if (file.getSize() > 5 * 1024 * 1024) {
             throw new BadRequestException("File size exceeds 5 MB");
         }
-        if(!file.getContentType().startsWith("image/")){
+        if (!file.getContentType().startsWith("image/")) {
             throw new BadRequestException("Only images are allowed");
         }
-        return mediaService.uploadProductImage(file, id);
+        return mediaService.uploadProductImage(file,id);
     }
 
     @SneakyThrows
@@ -39,6 +39,6 @@ public class MediaController extends AbstractController{
         File f = mediaService.downloadProductImage(fileName);
         Files.copy(f.toPath(), resp.getOutputStream());
     }
-
-
+//    @PostMapping("/media/review/{id:\\d+}")
+//    public uploadReviewImage(@RequestParam"")
 }

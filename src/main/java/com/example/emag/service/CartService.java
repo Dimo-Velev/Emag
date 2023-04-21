@@ -32,7 +32,7 @@ public class CartService extends AbstractService {
                 .map(cartContent -> {
                     ProductInCartDTO product = new ProductInCartDTO();
                     product.setName(cartContent.getProduct().getName());
-                    product.setDiscount(cartContent.getProduct().getDiscount().getDiscountPercent() + "%");
+                    product.setDiscount(cartContent.getProduct().getDiscount().getDiscountPercent());
                     product.setQuantity(cartContent.getQuantity());
                     product.setPrice(cartContent.getProduct().getPrice());
                     return product;
@@ -72,7 +72,7 @@ public class CartService extends AbstractService {
         checkIfValidQuantity(dto.getQuantity());
         CartContent cartContent = cartContentRepository.findByProductIdAndUserId(id, userId).orElseThrow(
                 () -> new BadRequestException("That products is not in your cart."));
-        Product productInDb = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found in our shop."));
+        Product productInDb = getProductById(id);
         if (productInDb.getQuantity() < dto.getQuantity()) {
             throw new NotFoundException("We don't have that much quantity in of that product.");
         }
@@ -82,9 +82,9 @@ public class CartService extends AbstractService {
         product.setName(cartContent.getProduct().getName());
         product.setQuantity(dto.getQuantity());
         if(productInDb.getDiscount() != null){
-            product.setDiscount(productInDb.getDiscount().getDiscountPercent()+ "%");
+            product.setDiscount(productInDb.getDiscount().getDiscountPercent());
         }
-        product.setDiscount("No discount for this product.");
+        product.setDiscount(0);
         cartContentRepository.save(cartContent);
         return product;
     }
@@ -121,7 +121,7 @@ public class CartService extends AbstractService {
         dto.setName(cartContent.getProduct().getName());
         dto.setQuantity(cartContent.getQuantity());
         dto.setPrice(cartContent.getProduct().getPrice());
-        dto.setDiscount(cartContent.getProduct().getDiscount().getDiscountPercent() + "%");
+        dto.setDiscount(cartContent.getProduct().getDiscount().getDiscountPercent());
         return dto;
     }
 

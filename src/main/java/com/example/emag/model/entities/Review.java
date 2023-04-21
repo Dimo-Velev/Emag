@@ -7,7 +7,9 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -18,33 +20,27 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-
     @Column
     private int rating;
-
     @Column
     private String headline;
-
     @Column
     private String text;
-
     @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
-
     @Column
     private String pictureUrl;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
     @Column
     private int isApproved;
+    @ManyToMany(mappedBy = "likes", fetch = FetchType.LAZY)
+    private Set<User> likedBy = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

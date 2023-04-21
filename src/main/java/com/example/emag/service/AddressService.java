@@ -38,8 +38,8 @@ public class AddressService extends AbstractService {
         if (!dto.getResidentialArea().equals(address.getResidentialArea())) {
             address.setResidentialArea(dto.getResidentialArea());
         }
-        if (dto.getFloor() != address.getFloor()) {
-            address.setFloor(dto.getFloor());
+        if (Integer.parseInt(dto.getFloor()) !=(address.getFloor())) {
+            address.setFloor(Integer.parseInt(dto.getFloor()));
         }
         addressRepository.save(address);
         return dto;

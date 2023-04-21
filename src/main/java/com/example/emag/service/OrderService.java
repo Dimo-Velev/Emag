@@ -56,7 +56,7 @@ public class OrderService extends AbstractService {
     }
 
     private Order findOrderById(int id) {
-        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Card not found."));
+        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order not found."));
     }
 
     private void checkIfItsUserOrder(Order order, int userId) {
@@ -97,16 +97,16 @@ public class OrderService extends AbstractService {
         }
         Set<CartContent> productsInCart = user.getProductsInCart();
         checkEachProductQuantityInDB(productsInCart);
-        productsInCart.forEach(cartContent -> cartContentRepository.deleteById(cartContent.getId()));
+        //productsInCart.forEach(cartContent -> cartContentRepository.deleteById(cartContent.getId()));
+        cartContentRepository.deleteAll(productsInCart);
         return productsInCart;
     }
 
     private void checkEachProductQuantityInDB(Set<CartContent> productsInCart) {
         productsInCart.forEach(cartContent -> {
-            Product product = productRepository.findById(cartContent.getProduct().getId()).orElseThrow(
-                    () -> new BadRequestException("Product not found." + cartContent.getProduct().getName()));
-            if (product.getQuantity() < cartContent.getQuantity()) {
-                throw new BadRequestException("Not enough quantity of " + product.getName());
+           // Product product = getProductById(cartContent.getProduct().getId());
+            if (cartContent.getProduct().getQuantity() < cartContent.getQuantity()) {
+                throw new BadRequestException("Not enough quantity of " + cartContent.getProduct().getName());
             }
         });
     }
