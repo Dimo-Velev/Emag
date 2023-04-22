@@ -52,8 +52,6 @@ public class UserController extends AbstractController{
         int userId = getLoggedId(s);
         return userService.viewUserHistory(userId, pageable);
     }
-//    @Role()
-//    @Secured({"admin"})
 
     @PutMapping("/my-account")
     public void editUserInfo(@Valid @RequestBody EditProfileDTO dto, HttpSession s){

@@ -10,7 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -44,12 +45,14 @@ public abstract class AbstractService {
        return reviewRepository.findById(id).orElseThrow(() -> new NotFoundException("Review not found."));
     }
     protected void sendEmail(Product product){
-        List<User> subscribers = product.getUserFavourites();
-        for (User user : subscribers){
-            if(user.isSubscribed()) {
-                emailSender.sendMessage(user.getEmail(), product);
-            }
-        }
+        Set<User> subscribers = product.getUserFavourites();
+        subscribers.addAll(product.getProductInCarts().stream()
+                .map(cartContent -> cartContent.getUser())
+                .collect(Collectors.toSet()));
+
+        subscribers.stream()
+                .filter(user -> user.isSubscribed())
+                .forEach(user -> emailSender.sendMessage(user.getEmail(),product));
     }
 
 

@@ -15,8 +15,8 @@ public class EmailSender {
         new Thread(() -> {
             SimpleMailMessage email = new SimpleMailMessage();
             email.setTo(receiver);
-            email.setSubject("Product in favourites is in discount!");
-            email.setText("Your favourite products " + product.getName() + " is now discounted with " +
+            email.setSubject("Product in discount!");
+            email.setText("Your favourite product " + product.getName() + " is now discounted with " +
                     product.getDiscount().getDiscountPercent() + " percent. Limited offer until "
                     + product.getDiscount().getExpireDate());
             javaMailSender.send(email);
