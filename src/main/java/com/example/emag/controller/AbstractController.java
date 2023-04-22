@@ -21,6 +21,7 @@ import java.util.Map;
 
 @RestController
 public abstract class AbstractController {
+    public static final String LOGGED_ID = "LOGGED_ID";
 
     @Autowired
     protected MediaService mediaService;
@@ -65,26 +66,14 @@ public abstract class AbstractController {
                 .build();
     }
 
-
-//    protected int getLoggedId(HttpSession s) {
-//        isLogged(s);
-//        return (int) s.getAttribute("LOGGED_ID");
-//    }
-//    protected boolean isLogged(HttpSession s) {
-//        if (s.getAttribute("LOGGED_ID") == null) {
-//            throw new UnauthorizedException("You have to lo gin first");
-//        }
-//        return true;
-//    }
-
     protected int getLoggedId(HttpSession s){
         if(!isLogged(s)){
             throw new UnauthorizedException("You have to login first");
         }
-        return (int) s.getAttribute("LOGGED_ID");
+        return (int) s.getAttribute(LOGGED_ID);
     }
     protected boolean isLogged(HttpSession s) {
-        return s.getAttribute("LOGGED_ID") != null;
+        return s.getAttribute(LOGGED_ID) != null;
     }
 
 

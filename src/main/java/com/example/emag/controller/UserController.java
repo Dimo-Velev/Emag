@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController extends AbstractController{
 
+
     @Autowired
     private UserService userService;
 
@@ -25,7 +26,7 @@ public class UserController extends AbstractController{
     @PostMapping("/login")
     public UserWithoutPassDTO login(@Valid @RequestBody LoginDTO dto, HttpSession s){
         UserWithoutPassDTO respDto = userService.login(dto);
-        s.setAttribute("LOGGED_ID", respDto.getId());
+        s.setAttribute(LOGGED_ID, respDto.getId());
         return respDto;
     }
 

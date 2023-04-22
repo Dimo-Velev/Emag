@@ -6,6 +6,7 @@ import com.example.emag.model.entities.ProductImage;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.repositories.ProductImageRepository;
+import jakarta.transaction.Transactional;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class MediaService extends AbstractService{
     @Autowired
     protected ProductImageRepository productImageRepository;
+
+    @Transactional
     public ProductImageDTO uploadProductImage(MultipartFile file, int productId) {
         try{
             Product p = getProductById(productId);

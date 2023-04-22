@@ -7,6 +7,7 @@ import com.example.emag.model.entities.Category;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.repositories.CategoryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,8 @@ public class CategoryService extends AbstractService {
         return mapper.map(p, CategoryViewDTO.class);
     }
 
+    @Transactional
     public CategoryViewDTO deleteCategoryById(int id) {
-        //TODO update the child categories of the deleted category to set their parentCategory field to null
         Category c = getCategoryById(id);
         CategoryViewDTO respDto = mapper.map(c, CategoryViewDTO.class);
         categoryRepository.deleteById(c.getId());

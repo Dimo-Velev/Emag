@@ -9,6 +9,7 @@ import com.example.emag.model.entities.Product;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.repositories.DiscountRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,7 @@ public class DiscountService extends AbstractService{
         return mapper.map(discount,DiscountViewDTO.class);
     }
 
+    @Transactional
     public DiscountViewDTO deleteDiscountById(int id) {
         Discount d = getDiscountById(id);
         DiscountViewDTO dto = mapper.map(d,DiscountViewDTO.class);
@@ -79,9 +81,9 @@ public class DiscountService extends AbstractService{
         }
         p.setDiscount(d);
         productRepository.save(p);
+        sendEmail(p);
         return mapper.map(p,ProductViewDTO.class);
     }
-
 
 
 

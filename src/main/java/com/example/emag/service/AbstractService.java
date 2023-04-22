@@ -1,5 +1,6 @@
 package com.example.emag.service;
 
+import com.example.emag.model.EmailSender;
 import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.entities.*;
@@ -8,6 +9,9 @@ import com.example.emag.model.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 
 @Service
 public abstract class AbstractService {
@@ -23,6 +27,9 @@ public abstract class AbstractService {
     protected ReviewRepository reviewRepository;
     @Autowired
     protected ModelMapper mapper;
+    @Autowired
+    protected EmailSender emailSender;
+
 
     protected Category getCategoryById(int id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
@@ -36,4 +43,14 @@ public abstract class AbstractService {
     protected Review getReviewById(int id){
        return reviewRepository.findById(id).orElseThrow(() -> new NotFoundException("Review not found."));
     }
+    protected void sendEmail(Product product){
+        List<User> subscribers = product.getUserFavourites();
+        for (User user : subscribers){
+            if(user.isSubscribed()) {
+                emailSender.sendMessage(user.getEmail(), product);
+            }
+        }
+    }
+
+
 }

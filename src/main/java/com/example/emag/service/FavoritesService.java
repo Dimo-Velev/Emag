@@ -47,7 +47,7 @@ public class FavoritesService extends AbstractService {
                 .map(review -> review.getRating())
                 .reduce((rating1, total) -> rating1 + total);
         rating.ifPresent(integer -> dto.setRating(rating.get()));
-        dto.setDiscount(product.getDiscount().getDiscountPercent());
+//        dto.setDiscount(product.getDiscount().getDiscountPercent());
         return dto;
     }
 }
