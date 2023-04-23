@@ -2,19 +2,18 @@ package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.DTOs.user.*;
-import com.example.emag.model.entities.Product;
 import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 public class UserController extends AbstractController{
+
 
     @Autowired
     private UserService userService;
@@ -27,7 +26,7 @@ public class UserController extends AbstractController{
     @PostMapping("/login")
     public UserWithoutPassDTO login(@Valid @RequestBody LoginDTO dto, HttpSession s){
         UserWithoutPassDTO respDto = userService.login(dto);
-        s.setAttribute("LOGGED_ID", respDto.getId());
+        s.setAttribute(LOGGED_ID, respDto.getId());
         return respDto;
     }
 
@@ -49,12 +48,10 @@ public class UserController extends AbstractController{
     }
 
     @GetMapping("/history")
-    public List<ProductViewDTO> viewUserHistory(HttpSession s){
+    public Page<ProductViewDTO> viewUserHistory(HttpSession s, Pageable pageable){
         int userId = getLoggedId(s);
-        return userService.viewUserHistory(userId);
+        return userService.viewUserHistory(userId, pageable);
     }
-//    @Role()
-//    @Secured({"admin"})
 
     @PutMapping("/my-account")
     public void editUserInfo(@Valid @RequestBody EditProfileDTO dto, HttpSession s){

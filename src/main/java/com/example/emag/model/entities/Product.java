@@ -35,6 +35,10 @@ public class Product {
     private List<Review> reviews;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private Set<CartContent> productInCarts;
+    @ManyToMany(mappedBy = "favoriteProducts")
+    private Set<User> userFavourites;
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -9,8 +9,10 @@ import com.example.emag.model.entities.*;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
+import com.example.emag.model.repositories.OrderContentRepository;
 import com.example.emag.model.repositories.OrderRepository;
 import com.example.emag.model.repositories.OrderStatusRepository;
+import com.example.emag.model.repositories.PaymentTypeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,11 @@ public class OrderService extends AbstractService {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
+    protected OrderContentRepository orderContentRepository;
+    @Autowired
     private OrderStatusRepository orderStatusRepository;
+    @Autowired
+    protected PaymentTypeRepository paymentTypeRepository;
 
     public List<OrderWithFewInfoDTO> getAllOrders(int id) {
         List<Order> orderList = orderRepository.getAllByUserId(id);

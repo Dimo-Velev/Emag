@@ -1,6 +1,5 @@
 package com.example.emag.model.DTOs.category;
 
-import com.example.emag.model.entities.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

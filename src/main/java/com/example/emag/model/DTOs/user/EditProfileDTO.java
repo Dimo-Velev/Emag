@@ -14,10 +14,12 @@ import java.time.LocalDate;
 public class EditProfileDTO {
 
     @NotNull
+    @Pattern(regexp = "^[a-zA-Z]*$",message = "Last name can contain only letters")
     private String firstName;
     @NotNull
+    @Pattern(regexp = "^[a-zA-Z]*$",message = "Last name can contain only letters")
     private String lastName;
-    @Pattern(regexp = "^\\d{10}$", message = "Incorrect phone number format") //must be 10 digits
+    @Pattern(regexp = "^08[789]\\d{7}$", message = "Phone number should start with 08 and be 10 numbers.")
     private String phoneNumber;
     private String userName;
     private Boolean isMale;

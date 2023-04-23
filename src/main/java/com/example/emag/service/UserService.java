@@ -2,18 +2,18 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.model.DTOs.user.*;
+import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.User;
-import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.example.emag.model.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService extends AbstractService {
@@ -38,10 +38,10 @@ public class UserService extends AbstractService {
     public UserWithoutPassDTO changePass(ChangePassDTO dto, int userId) {
         User u = getUserById(userId);
         if (!encoder.matches(dto.getPassword(), u.getPassword())) {
-            throw new BadRequestException("Passwords must match!");
-        }
-        if (!encoder.matches(dto.getPassword(), u.getPassword())) {
             throw new BadRequestException("You have provided invalid password for authentication");
+        }
+        if (!encoder.matches(dto.getNewPassword(), dto.getConfirmNewPassword())) {
+            throw new BadRequestException("Passwords must match!");
         }
         u.setPassword(encoder.encode(dto.getConfirmNewPassword()));
         userRepository.save(u);
@@ -65,9 +65,6 @@ public class UserService extends AbstractService {
     }
 
     public void editUserInfo(EditProfileDTO dto, int loggedId) {
-        //TODO
-        // check validation for DTO data
-
         User u = getUserById(loggedId);
         u.setFirstName(dto.getFirstName());
         u.setLastName(dto.getLastName());
@@ -92,15 +89,13 @@ public class UserService extends AbstractService {
         userRepository.save(u);
     }
 
-    public List<ProductViewDTO> viewUserHistory(int userId) {
-        User u = getUserById(userId);
-        return u.getViewedProducts().stream()
-                .map(product -> mapper.map(product, ProductViewDTO.class))
-                .collect(Collectors.toList());
+    public Page<ProductViewDTO> viewUserHistory(int userId, Pageable pageable) {
+        Page<Product> productPage = productRepository.findProductsByUserId(userId, pageable);
+        return productPage.map(product -> mapper.map(product, ProductViewDTO.class));
     }
 
     public boolean isAdmin(int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found."));
+        User user = getUserById(id);
         return user.isAdmin();
     }
 }

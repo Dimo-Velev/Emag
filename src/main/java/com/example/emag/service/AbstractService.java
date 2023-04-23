@@ -1,5 +1,8 @@
 package com.example.emag.service;
 
+import com.example.emag.model.EmailSender;
+import com.example.emag.model.entities.Product;
+import com.example.emag.model.entities.User;
 import com.example.emag.model.entities.*;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.repositories.*;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,22 +25,16 @@ public abstract class AbstractService {
     @Autowired
     protected CartContentRepository cartContentRepository;
     @Autowired
-    protected DiscountRepository discountRepository;
-    @Autowired
-    protected PaymentTypeRepository paymentTypeRepository;
-    @Autowired
-    protected AddressRepository addressRepository;
-    @Autowired
-    protected OrderContentRepository orderContentRepository;
-    @Autowired
-    protected ProductImageRepository productImageRepository;
-    @Autowired
     protected ReviewRepository reviewRepository;
     @Autowired
     protected ModelMapper mapper;
+    @Autowired
+    protected EmailSender emailSender;
+    @Autowired
+    protected  DiscountRepository discountRepository;
 
     protected Category getCategoryById(int id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Parent category not found"));
+        return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
     }
 
     protected User getUserById(int id) {
@@ -45,7 +43,6 @@ public abstract class AbstractService {
 
     protected Discount getDiscountById(int id) {
         return discountRepository.findById(id).orElseThrow(() -> new NotFoundException("Discount not found"));
-
     }
 
     protected Product getProductById(int id) {
@@ -68,4 +65,16 @@ public abstract class AbstractService {
                 })
                 .sum();
     }
+
+    protected void sendEmail(Product product){
+        Set<User> subscribers = product.getUserFavourites();
+        subscribers.addAll(product.getProductInCarts().stream()
+                .map(cartContent -> cartContent.getUser())
+                .collect(Collectors.toSet()));
+
+        subscribers.stream()
+                .filter(user -> user.isSubscribed())
+                .forEach(user -> emailSender.sendMessage(user.getEmail(),product));
+    }
 }
+

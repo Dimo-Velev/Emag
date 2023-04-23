@@ -1,58 +1,60 @@
 package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.product.ProductAddDTO;
+import com.example.emag.model.DTOs.product.ProductEditDTO;
 import com.example.emag.model.DTOs.product.ProductQtyChangeDTO;
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import com.example.emag.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
-public class ProductController extends AbstractController{
+public class ProductController extends AbstractController {
 
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/products/{id}")
-    public ProductViewDTO viewProductById(@PathVariable int id, HttpSession s){
-        if(isLogged(s)){
-            return productService.userViewProductById(id,getLoggedId(s));
+    @GetMapping("/products/{id:\\d+}")
+    public ProductViewDTO viewProductById(@PathVariable int id, HttpSession s) {
+        if (isLogged(s)) {
+            return productService.userViewProductById(id, getLoggedId(s));
         }
         return productService.viewProductById(id);
-        //TODO check with @Aspect
     }
+
     @PostMapping("/products")
-    public ProductViewDTO addProduct(@Valid @RequestBody ProductAddDTO p){
+    public ProductViewDTO addProduct(@Valid @RequestBody ProductAddDTO p) {
         return productService.addProduct(p);
     }
-    @DeleteMapping("products/{id}")
+
+    @DeleteMapping("products/{id:\\d+}")
     public ProductViewDTO deleteProductById(@PathVariable int id) {
         return productService.deleteProductById(id);
     }
-    @PutMapping("/products/{id}/quantity")
+
+    @PutMapping("/products/{id:\\d+}/quantity")
     public ProductViewDTO changeProductQty(@Valid @PathVariable int id, @RequestBody ProductQtyChangeDTO dto) {
-        return productService.changeProductQty(id,dto.getQuantity());
+        return productService.changeProductQty(id, dto.getQuantity());
     }
 
-    @PutMapping("/products/{id}")
-    public ProductViewDTO editProductDetails(@PathVariable int id){
-//        return productService.editProductDetails(id);
-        //TODO
-        return null;
+    @PutMapping("/products/{id:\\d+}")
+    public ProductViewDTO editProductDetails(@PathVariable int id, @Valid @RequestBody ProductEditDTO dto) {
+        return productService.editProductDetails(id, dto);
     }
 
     @GetMapping("/products/search")
-    public List<ProductViewDTO> searchByName(@RequestParam String name){
-        return productService.searchByName(name);
+    public Page<ProductViewDTO> searchByName(@RequestParam String name, Pageable pageable) {
+        return productService.searchByName(name, pageable);
     }
 
-    @GetMapping("/categories/{id}/products")
-    public List<ProductViewDTO> viewAllProductsInCategoryId(@PathVariable int id){
-        return productService.viewAllProductsInCategoryId(id);
+    @GetMapping("/categories/{id:\\d+}/products")
+    public Page<ProductViewDTO> viewAllProductsByCategoryId(@PathVariable int id, Pageable pageable) {
+        return productService.viewAllProductsByCategoryId(pageable, id);
     }
 
 }

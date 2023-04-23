@@ -8,6 +8,7 @@ import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @RestController
 public abstract class AbstractController {
+    public static final String LOGGED_ID = "LOGGED_ID";
 
     @Autowired
     protected MediaService mediaService;
@@ -46,6 +48,12 @@ public abstract class AbstractController {
         return generateErrorDTO(e, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDTO handleNotReadable(Exception e) {
+        return generateErrorDTO(e, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleRest(Exception e) {
@@ -60,26 +68,14 @@ public abstract class AbstractController {
                 .build();
     }
 
-
-//    protected int getLoggedId(HttpSession s) {
-//        isLogged(s);
-//        return (int) s.getAttribute("LOGGED_ID");
-//    }
-//    protected boolean isLogged(HttpSession s) {
-//        if (s.getAttribute("LOGGED_ID") == null) {
-//            throw new UnauthorizedException("You have to lo gin first");
-//        }
-//        return true;
-//    }
-
     protected int getLoggedId(HttpSession s){
         if(!isLogged(s)){
             throw new UnauthorizedException("You have to login first");
         }
-        return (int) s.getAttribute("LOGGED_ID");
+        return (int) s.getAttribute(LOGGED_ID);
     }
     protected boolean isLogged(HttpSession s) {
-        return s.getAttribute("LOGGED_ID") != null;
+        return s.getAttribute(LOGGED_ID) != null;
     }
 
 
