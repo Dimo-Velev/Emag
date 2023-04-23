@@ -11,7 +11,7 @@ public class ProductReactDTO {
 
     private String name;
     private double price;
-//    private int discount;
+    private int discountPercentage;
     private double rating;
     private String message;
 }

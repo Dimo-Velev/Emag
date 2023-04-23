@@ -72,7 +72,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Product> viewedProducts = new HashSet<>(); // TODO hashset
+    private Set<Product> viewedProducts;
 
 
     @Override

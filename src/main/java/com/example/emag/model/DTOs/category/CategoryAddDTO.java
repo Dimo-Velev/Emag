@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class CategoryAddDTO {
-    @NotNull
+    @NotNull(message = "Category cannot be null")
     private String name;
     private int parentCategoryId;
 

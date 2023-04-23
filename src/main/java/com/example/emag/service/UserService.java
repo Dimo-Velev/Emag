@@ -98,4 +98,10 @@ public class UserService extends AbstractService {
         User user = getUserById(id);
         return user.isAdmin();
     }
+
+    public void setUserAsAdmin(int id) {
+        User u = getUserById(id);
+        u.setAdmin(true);
+        userRepository.save(u);
+    }
 }

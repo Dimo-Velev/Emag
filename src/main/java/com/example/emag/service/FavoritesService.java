@@ -21,8 +21,13 @@ public class FavoritesService extends AbstractService {
         if (products == null) {
             throw new NotFoundException("You have no favorite products.");
         }
-        return products.stream().
-                map(product -> mapper.map(product, ProductFavoritesDTO.class))
+        return products.stream()
+                .map(product -> {
+                    double rating = calculateRating(product);
+                    ProductFavoritesDTO dto = mapper.map(product, ProductFavoritesDTO.class);
+                    dto.setRating(rating);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -47,8 +52,16 @@ public class FavoritesService extends AbstractService {
                 .map(review -> review.getRating())
                 .reduce((rating1, total) -> rating1 + total);
         rating.ifPresent(integer -> dto.setRating(rating.get()));
-//        dto.setDiscount(product.getDiscount().getDiscountPercent());
+        dto.setDiscountPercentage(product.getDiscount().getDiscountPercent());
         return dto;
     }
+
+    private double calculateRating(Product p){
+       double totalRating = p.getReviews().stream()
+                .mapToDouble(value -> value.getRating())
+                .sum();
+       return totalRating/p.getReviews().size();
+    }
+
 }
 

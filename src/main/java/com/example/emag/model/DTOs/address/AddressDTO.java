@@ -2,6 +2,7 @@ package com.example.emag.model.DTOs.address;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AddressDTO {
 
+    @NotNull(message = "Name cannot be null")
     @Pattern(regexp = "^[A-Za-z]+ [A-Za-z]+$", message = "Names should be letters only, separated with space.")
     private String name;
     @Pattern(regexp = "^08[789]\\d{7}$", message = "Phone number should start with 08 and be 10 numbers.")

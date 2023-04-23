@@ -12,12 +12,11 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class DiscountAddDTO {
-    @NotNull
-    @Positive
+    @Positive(message = "Discount percent should be positive")
     private int discountPercent;
-    @NotNull
+    @NotNull(message = "Category cannot be null")
     private LocalDateTime startDate;
-    @NotNull
+    @NotNull(message = "Category cannot be null")
     private LocalDateTime expireDate;
 
 }
