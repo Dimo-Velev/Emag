@@ -1,6 +1,6 @@
 package com.example.emag.service;
 
-import com.example.emag.model.EmailSender;
+import com.example.emag.model.util.EmailSender;
 import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.entities.*;

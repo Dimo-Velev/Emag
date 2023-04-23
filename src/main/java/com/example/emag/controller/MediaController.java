@@ -1,6 +1,6 @@
 package com.example.emag.controller;
 
-import com.example.emag.model.DTOs.ProductImageDTO;
+import com.example.emag.model.DTOs.product.ProductImageDTO;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.service.MediaService;
 import jakarta.servlet.http.HttpServletResponse;

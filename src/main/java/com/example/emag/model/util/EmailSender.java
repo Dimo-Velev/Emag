@@ -1,4 +1,4 @@
-package com.example.emag.model;
+package com.example.emag.model.util;
 
 import com.example.emag.model.entities.Product;
 import org.springframework.beans.factory.annotation.Autowired;

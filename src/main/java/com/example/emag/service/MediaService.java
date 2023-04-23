@@ -1,6 +1,6 @@
 package com.example.emag.service;
 
-import com.example.emag.model.DTOs.ProductImageDTO;
+import com.example.emag.model.DTOs.product.ProductImageDTO;
 import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.ProductImage;
 import com.example.emag.model.entities.Review;

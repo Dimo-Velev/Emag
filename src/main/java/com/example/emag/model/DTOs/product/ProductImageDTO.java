@@ -1,4 +1,4 @@
-package com.example.emag.model.DTOs;
+package com.example.emag.model.DTOs.product;
 
 import com.example.emag.model.DTOs.product.ProductViewDTO;
 import lombok.AllArgsConstructor;
