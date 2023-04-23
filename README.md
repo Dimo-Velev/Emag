@@ -1,7 +1,7 @@
 # Emag
 
 created by : 
-Lyubomir Tomov
+Lyubomir Tomov &
 Dimo Velev
 
 IT Talents S15 - final project
