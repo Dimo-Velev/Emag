@@ -85,4 +85,11 @@ public class ProductService extends AbstractService {
         productRepository.save(p);
         return mapper.map(p, ProductViewDTO.class);
     }
+
+    public Page<ProductViewDTO> filterProducts(int min, int max, boolean desc, Pageable pageable) {
+        String order = desc ? "DESC" : "ASC";
+        Page<Product> productPage = productRepository.filterMinMaxPrice(min, max, order, pageable);
+        return productPage.map(product -> mapper.map(product,ProductViewDTO.class));
+    }
+
 }

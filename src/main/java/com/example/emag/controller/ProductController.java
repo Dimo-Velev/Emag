@@ -57,8 +57,17 @@ public class ProductController extends AbstractController {
     }
 
     @GetMapping("/categories/{id:\\d+}/products")
-    public Page<ProductViewDTO> viewAllProductsByCategoryId(@PathVariable int id, Pageable pageable) {
+    public Page<ProductViewDTO> filterProducts(@PathVariable int id, Pageable pageable) {
         return productService.viewAllProductsByCategoryId(pageable, id);
     }
+
+    @GetMapping("/products/filter")
+    public Page<ProductViewDTO> filterProducts(@RequestParam int min,
+                                               @RequestParam int max,
+                                               @RequestParam(required = false) boolean desc,
+                                               Pageable pageable) {
+        return productService.filterProducts(min, max, desc, pageable);
+    }
+
 
 }
