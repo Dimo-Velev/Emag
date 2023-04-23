@@ -27,22 +27,22 @@ public class ReviewController extends AbstractController {
         return reviewService.createReviewForProduct(dto,id,getLoggedId(session));
     }
     @GetMapping("/products/{id:\\d+}/reviews")
-    public Page<ReviewWithoutPicDTO> viewAllForProduct(@PathVariable int id,
-                                                       @RequestParam(required = false, name = "rating")
+    public Page<ReviewWithUserDTO> viewAllForProduct(@PathVariable int id,
+                                                     @RequestParam(required = false, name = "rating")
                                                        @Pattern(regexp = "^[1-5]$",
                                                                message = "View by rating has to be between 1 and 5") String rating,
-                                                       @RequestParam(required = false, name = "sort")
+                                                     @RequestParam(required = false, name = "sort")
                                                        @Pattern(regexp = "newest|most-Popular",
                                                                message = "View by date has to be newest or most-Popular") String sort,
-                                                       @PageableDefault(size = 10) Pageable pageable){
+                                                     @PageableDefault(size = 10) Pageable pageable){
         return reviewService.viewAllReviewsForProduct(id,rating,sort,pageable);
     }
     @GetMapping("/reviews")
-    public List<ReviewWithoutPicAllDTO> viewAllOwn(HttpSession session) {
+    public List<ReviewDTO> viewAllOwn(HttpSession session) {
         return reviewService.viewAllOwnReviews(getLoggedId(session));
     }
     @PutMapping("/reviews/{id:\\d+}")
-    public ReviewWithoutPicAllDTO edit(@Valid @RequestBody EditReviewDTO dto,@PathVariable int id, HttpSession session){
+    public ReviewDTO edit(@Valid @RequestBody EditReviewDTO dto, @PathVariable int id, HttpSession session){
         return reviewService.editReviewOnProduct(dto,id,getLoggedId(session));
     }
     @PutMapping("/reviews/{id:\\d+}/react")
@@ -61,7 +61,7 @@ public class ReviewController extends AbstractController {
         return ResponseEntity.ok("Review was approved.");
     }
     @GetMapping("/reviews/pending")
-    public Page<ReviewWithoutPicAllDTO> getAllUnapprovedReviews(@PageableDefault(size = 10) Pageable pageable, HttpSession session) {
+    public Page<ReviewDTO> getAllUnapprovedReviews(@PageableDefault(size = 10) Pageable pageable, HttpSession session) {
         isLoggedAdmin(session);
         return reviewService.getAllUnapprovedReviews(pageable);
     }

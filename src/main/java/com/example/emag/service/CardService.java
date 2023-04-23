@@ -2,6 +2,7 @@ package com.example.emag.service;
 
 import com.example.emag.model.DTOs.card.CardDTO;
 import com.example.emag.model.DTOs.card.CardWithFewInfoDTO;
+import com.example.emag.model.DTOs.card.CardWithIdDTO;
 import com.example.emag.model.entities.Card;
 import com.example.emag.model.entities.User;
 import com.example.emag.model.exceptions.BadRequestException;
@@ -43,7 +44,7 @@ public class CardService extends AbstractService {
                 .toList();
     }
 
-    public CardWithFewInfoDTO addCard(CardDTO dto, int id) {
+    public CardWithIdDTO addCard(CardDTO dto, int id) {
         User user = getUserById(id);
         boolean isCardRegistered = user.getCards().stream()
                 .anyMatch(card -> dto.getCardNumber().equals(textEncryptor.decrypt(card.getCardNumber())));
@@ -61,13 +62,11 @@ public class CardService extends AbstractService {
         card.setCvvCode(textEncryptor.encrypt(dto.getCvvCode()));
         card.setUser(user);
         cardRepository.save(card);
-        return new CardWithFewInfoDTO();
+        return mapper.map(card,CardWithIdDTO.class);
     }
 
 
     public void deleteCard(int id, int userId) {
-        User user = getUserById(id);
-
         Card card = cardRepository.findById(id).orElseThrow(() -> new NotFoundException("Card not found."));
         if (card.getUser().getId() != userId) {
             throw new UnauthorizedException("You have no access to this resource.");

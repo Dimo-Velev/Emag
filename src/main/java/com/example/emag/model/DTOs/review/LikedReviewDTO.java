@@ -16,6 +16,7 @@ public class LikedReviewDTO {
     private int rating;
     private String headline;
     private String text;
+    private String pictureUrl;
     private LocalDateTime createdAt;
     private ProductViewDTO product;
     private String message;

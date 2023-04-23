@@ -87,7 +87,7 @@ public class OrderService extends AbstractService {
         Set<CartContent> products = getProductsFromCart(user);
         Order order = createNewOrder(products, user, paymentType, address);
         CreatedOrderDTO dtoOrder = new CreatedOrderDTO();
-        dtoOrder.setName("Bill" + order.getId());
+        dtoOrder.setId(order.getId());
         dtoOrder.setCreatedAt(order.getCreatedAt());
         dtoOrder.setAddress(mapper.map(order.getAddress(), OrderAddressDTO.class));
         dtoOrder.setProducts(order.getProductsInOrder().stream()

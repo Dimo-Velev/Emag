@@ -13,10 +13,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EditProfileDTO {
 
-    @NotNull
+    @NotNull(message = "First name cannot be null.")
     @Pattern(regexp = "^[a-zA-Z]*$",message = "Last name can contain only letters")
     private String firstName;
-    @NotNull
+    @NotNull(message = "Last name cannot be null.")
     @Pattern(regexp = "^[a-zA-Z]*$",message = "Last name can contain only letters")
     private String lastName;
     @Pattern(regexp = "^08[789]\\d{7}$", message = "Phone number should start with 08 and be 10 numbers.")

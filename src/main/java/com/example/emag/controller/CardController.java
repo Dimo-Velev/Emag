@@ -3,6 +3,7 @@ package com.example.emag.controller;
 
 import com.example.emag.model.DTOs.card.CardDTO;
 import com.example.emag.model.DTOs.card.CardWithFewInfoDTO;
+import com.example.emag.model.DTOs.card.CardWithIdDTO;
 import com.example.emag.service.CardService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,9 @@ public class CardController extends AbstractController {
     }
 
     @PostMapping("/cards")
-    public CardWithFewInfoDTO add(@RequestBody CardDTO dto, HttpSession session) {
-        return cardService.addCard(dto, getLoggedId(session));
+    public ResponseEntity<CardWithIdDTO> add(@RequestBody CardDTO dto, HttpSession session) {
+        CardWithIdDTO idDTO = cardService.addCard(dto, getLoggedId(session));
+        return  ResponseEntity.ok(idDTO);
     }
 
 

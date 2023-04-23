@@ -33,7 +33,7 @@ public class ReviewService extends AbstractService {
         return mapper.map(review, ReviewWithFewInfoDTO.class);
     }
 
-    public Page<ReviewWithoutPicDTO> viewAllReviewsForProduct(int id, String rating, String sort,Pageable pageable) {
+    public Page<ReviewWithUserDTO> viewAllReviewsForProduct(int id, String rating, String sort, Pageable pageable) {
         Product product = getProductById(id);
         List<Review> reviews = product.getReviews();
         if (rating != null && !rating.isEmpty()) {
@@ -51,28 +51,29 @@ public class ReviewService extends AbstractService {
                     .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
                     .toList();
         }
-        return new PageImpl<>(reviews.stream()
+        List<ReviewWithUserDTO> reviewDTOs = reviews.stream()
                 .filter(review -> review.getIsApproved() == 1)
                 .skip(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .map(review -> mapper.map(review, ReviewWithoutPicDTO.class))
-                .toList(),pageable,reviews.size());
+                .map(review -> mapper.map(review, ReviewWithUserDTO.class))
+                .toList();
+        return new PageImpl<>(reviewDTOs, pageable, reviewDTOs.size());
     }
 
-    public List<ReviewWithoutPicAllDTO> viewAllOwnReviews(int id) {
+    public List<ReviewDTO> viewAllOwnReviews(int id) {
         List<Review> reviews = userRepository.findById(id).get().getReviews();
         return reviews.stream()
-                .map(review -> mapper.map(review, ReviewWithoutPicAllDTO.class))
+                .map(review -> mapper.map(review, ReviewDTO.class))
                 .toList();
     }
 
-    public ReviewWithoutPicAllDTO editReviewOnProduct(EditReviewDTO dto, int id, int userId) {
+    public ReviewDTO editReviewOnProduct(EditReviewDTO dto, int id, int userId) {
         Review review = reviewRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException("Not authorized."));
         review.setHeadline(dto.getHeadline());
         review.setRating(dto.getRating());
         review.setText(dto.getText());
         review.setIsApproved(0);
-        return mapper.map(reviewRepository.save(review), ReviewWithoutPicAllDTO.class);
+        return mapper.map(reviewRepository.save(review), ReviewDTO.class);
     }
 
     public LikedReviewDTO reactOnReview(int id, int userId) {
@@ -105,9 +106,9 @@ public class ReviewService extends AbstractService {
         review.setIsApproved(1);
         reviewRepository.save(review);
     }
-    public Page<ReviewWithoutPicAllDTO> getAllUnapprovedReviews(Pageable pageable) {
+    public Page<ReviewDTO> getAllUnapprovedReviews(Pageable pageable) {
         Page<Review> unapprovedReviews = reviewRepository.findByIsApprovedFalse(pageable);
-        return unapprovedReviews.map(unapprovedReview-> mapper.map(unapprovedReview, ReviewWithoutPicAllDTO.class));
+        return unapprovedReviews.map(unapprovedReview-> mapper.map(unapprovedReview, ReviewDTO.class));
     }
 }
 

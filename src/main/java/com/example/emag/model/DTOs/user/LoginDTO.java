@@ -10,9 +10,11 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class LoginDTO {
+
     @Email
+    @NotNull(message = "Email cannot be null.")
     private String email;
-    @NotNull
+    @NotNull(message = "Password cannot be null.")
     private String password;
 
 }

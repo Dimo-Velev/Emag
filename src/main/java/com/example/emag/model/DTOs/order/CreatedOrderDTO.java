@@ -17,7 +17,6 @@ public class CreatedOrderDTO {
 
     private int id;
     private Set<OrderContentDTO> products;
-    private String name;
     private LocalDateTime createdAt;
     private double totalPrice;
     private OrderAddressDTO address;
