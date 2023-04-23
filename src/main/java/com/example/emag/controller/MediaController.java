@@ -15,34 +15,39 @@ import java.io.File;
 import java.nio.file.Files;
 
 @RestController
-public class MediaController extends AbstractController{
+public class MediaController extends AbstractController {
 
     @Autowired
     private MediaService mediaService;
 
     @PostMapping("/media/products/{id:\\d+}")
     public ProductImageDTO uploadProductImage(@RequestParam("file") MultipartFile file,
-                                              @PathVariable int id) {
-       checkIfValidPicture(file);
-        return mediaService.uploadProductImage(file,id);
+                                              @PathVariable int id,
+                                              HttpSession s) {
+        isLoggedAdmin(s);
+        checkIfValidPicture(file);
+        return mediaService.uploadProductImage(file, id);
     }
 
     @SneakyThrows
-    @GetMapping("/media/products/{filename}")
-    public void downloadProductImage(@PathVariable("filename") String fileName, HttpServletResponse resp){
-        File f = mediaService.downloadProductImage(fileName);
+    @GetMapping("/media/{filename}")
+    public void downloadImage(@PathVariable("filename") String fileName, HttpServletResponse resp) {
+        File f = mediaService.downloadImage(fileName);
         Files.copy(f.toPath(), resp.getOutputStream());
     }
+
     @PostMapping("/media/reviews/{id:\\d+}")
-    public ResponseEntity<String> uploadPictureToReview(@RequestParam("file") MultipartFile file, @PathVariable int id, HttpSession session){
+    public ResponseEntity<String> uploadPictureToReview(@RequestParam("file") MultipartFile file,
+                                                        @PathVariable int id,
+                                                        HttpSession session) {
         checkIfValidPicture(file);
-        mediaService.uploadReviewPicture(file,id,getLoggedId(session));
+        mediaService.uploadReviewPicture(file, id, getLoggedId(session));
         return ResponseEntity.ok("Review image uploaded to Review.");
     }
 
-    private void checkIfValidPicture(MultipartFile file){
+    private void checkIfValidPicture(MultipartFile file) {
         if (file.isEmpty()) {
-           throw new BadRequestException("File is empty");
+            throw new BadRequestException("File is empty");
         }
         if (file.getSize() > 5 * 1024 * 1024) {
             throw new BadRequestException("File size exceeds 5 MB");

@@ -6,6 +6,7 @@ import com.example.emag.model.entities.ProductImage;
 import com.example.emag.model.entities.Review;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
+import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.ProductImageRepository;
 import jakarta.transaction.Transactional;
 import org.apache.commons.io.FilenameUtils;
@@ -27,15 +28,7 @@ public class MediaService extends AbstractService{
     public ProductImageDTO uploadProductImage(MultipartFile file, int productId) {
         try{
             Product p = getProductById(productId);
-            String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-            String name = UUID.randomUUID() + "."+ext;
-            File dir = new File("/uploads");
-            if(!dir.exists()){
-                dir.mkdirs();
-            }
-            File f = new File(dir, name);
-            Files.copy(file.getInputStream(), f.toPath());
-            String url = dir.getName() + File.separator + f.getName();
+            String url = getURL(file);
             ProductImage productImage = new ProductImage();
             productImage.setProduct(p);
             productImage.setPictureUrl(url);
@@ -47,8 +40,8 @@ public class MediaService extends AbstractService{
         }
     }
 
-    public File downloadProductImage(String fileName) {
-        File dir = new File("/uploads");
+    public File downloadImage(String fileName) {
+        File dir = new File("uploads");
         File f = new File(dir, fileName);
         if(f.exists()){
             return f;
@@ -59,16 +52,11 @@ public class MediaService extends AbstractService{
     @Transactional
     public void uploadReviewPicture(MultipartFile file, int id, int userId) {
         try{
-            Review review = reviewRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException("Review not found"));
-            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-            String name = UUID.randomUUID() + "."+extension;
-            File dir = new File("/uploads");
-            if(!dir.exists()){
-                dir.mkdirs();
+            Review review = getReviewById(id);
+            if(userId != review.getUser().getId()){
+                throw new UnauthorizedException("Access denied");
             }
-            File reviewPicture = new File(dir, name);
-            Files.copy(file.getInputStream(), reviewPicture.toPath());
-            String url = dir.getName() + File.separator + reviewPicture.getName();
+            String url = getURL(file);
             review.setPictureUrl(url);
             reviewRepository.save(review);
         }
@@ -76,4 +64,20 @@ public class MediaService extends AbstractService{
             throw new BadRequestException(e.getMessage());
         }
     }
+
+    private String getURL(MultipartFile file) throws IOException {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        String name = UUID.randomUUID() + "."+extension;
+        File dir = new File("uploads");
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        File picture = new File(dir, name);
+        Files.copy(file.getInputStream(), picture.toPath());
+        String url = dir.getName() + File.separator + picture.getName();
+        return url;
+    }
+
+
+
 }

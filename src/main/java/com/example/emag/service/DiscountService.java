@@ -33,17 +33,13 @@ public class DiscountService extends AbstractService{
         return mapper.map(d, DiscountViewDTO.class);
     }
 
-    public DiscountViewDTO addDiscount(DiscountAddDTO d) {
-        if(d.getExpireDate().isBefore(d.getStartDate())){
-            throw new BadRequestException("Expiry date cannot be before start date");
-        }
-        if(d.getExpireDate().isBefore(LocalDateTime.now())){
-            throw new BadRequestException("Expiry date cannot be before today");
-        }
-        Discount discount = mapper.map(d,Discount.class);
+    public DiscountViewDTO addDiscount(DiscountAddDTO dto) {
+        validateDiscount(dto);
+        Discount discount = mapper.map(dto,Discount.class);
         discountRepository.save(discount);
         return mapper.map(discount,DiscountViewDTO.class);
     }
+
 
     @Transactional
     public DiscountViewDTO deleteDiscountById(int id) {
@@ -62,9 +58,7 @@ public class DiscountService extends AbstractService{
     }
     public DiscountViewDTO updateDiscount(int id, DiscountAddDTO dto) {
         Discount d = getDiscountById(id);
-        if(dto.getExpireDate().isBefore(dto.getStartDate())){
-            throw new BadRequestException("Expiry date cannot be before start date");
-        }
+        validateDiscount(dto);
         d.setDiscountPercent(dto.getDiscountPercent());
         d.setExpireDate(dto.getExpireDate());
         d.setExpireDate(dto.getStartDate());
@@ -84,6 +78,18 @@ public class DiscountService extends AbstractService{
         sendEmail(p);
         return mapper.map(p,ProductViewDTO.class);
     }
+
+
+
+    private void validateDiscount(DiscountAddDTO d) {
+        if(d.getExpireDate().isBefore(d.getStartDate())){
+            throw new BadRequestException("Expiry date cannot be before start date");
+        }
+        if(d.getExpireDate().isBefore(LocalDateTime.now())){
+            throw new BadRequestException("Expiry date cannot be before today");
+        }
+    }
+
 
 
 

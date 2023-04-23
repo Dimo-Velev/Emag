@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,20 +38,17 @@ public class UserController extends AbstractController{
 
     @PostMapping("/password")
     public UserWithoutPassDTO changePass(@Valid @RequestBody ChangePassDTO dto, HttpSession s ){
-        int userId = getLoggedId(s);
-        return userService.changePass(dto,userId);
+        return userService.changePass(dto,getLoggedId(s));
     }
 
     @GetMapping("/my-account")
     public UserWithoutPassDTO viewUserInfo(HttpSession s){
-        int userId = getLoggedId(s);
-        return userService.viewUserInfo(userId);
+        return userService.viewUserInfo(getLoggedId(s));
     }
 
     @GetMapping("/history")
     public Page<ProductViewDTO> viewUserHistory(HttpSession s, Pageable pageable){
-        int userId = getLoggedId(s);
-        return userService.viewUserHistory(userId, pageable);
+        return userService.viewUserHistory(getLoggedId(s), pageable);
     }
 
     @PutMapping("/my-account")
@@ -62,4 +60,16 @@ public class UserController extends AbstractController{
     public void editSubscription(HttpSession s){
         userService.editSubscription(getLoggedId(s));
     }
+
+    @PutMapping("/users/{id:\\d+}/admin/")
+    public ResponseEntity<String> setUserAsAdmin(HttpSession s, @PathVariable int id){
+        isLoggedAdmin(s);
+        userService.setUserAsAdmin(id);
+        return ResponseEntity.ok("User" + id + " was promoted to admin");
+    }
+
+
+
+
+
 }
