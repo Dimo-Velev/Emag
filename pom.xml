@@ -69,6 +69,12 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.bol/spring-data-mongodb-encrypt -->
+        <dependency>
+            <groupId>com.bol</groupId>
+            <artifactId>spring-data-mongodb-encrypt</artifactId>
+            <version>2.8.0</version>
+        </dependency>
 
     </dependencies>
 

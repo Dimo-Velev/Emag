@@ -15,7 +15,6 @@ public class ProductAddDTO {
     @Pattern(regexp = "^[a-zA-Z0-9\\s,.!?'\"-]*$", message = "Product name cannot contain special characters")
     @Size(min = 1, max = 255, message = "Product name must be between {min} and {max} characters")
     private String name;
-    @Nullable
     @Pattern(regexp = "^[a-zA-Z0-9\\s,.!?'\"-]*$", message = "Product description cannot contain special characters")
     private String description;
     @Positive(message = "Price must be positive")

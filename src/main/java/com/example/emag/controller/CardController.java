@@ -5,8 +5,8 @@ import com.example.emag.model.DTOs.card.CardDTO;
 import com.example.emag.model.DTOs.card.CardWithFewInfoDTO;
 import com.example.emag.service.CardService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,15 +23,14 @@ public class CardController extends AbstractController {
     }
 
     @PostMapping("/cards")
-    public CardWithFewInfoDTO add(@Valid @RequestBody CardDTO dto, HttpSession session) {
+    public CardWithFewInfoDTO add(@RequestBody CardDTO dto, HttpSession session) {
         return cardService.addCard(dto, getLoggedId(session));
     }
 
 
     @DeleteMapping("/cards/{id:\\d+}")
-    public String delete(@Valid @PathVariable int id, HttpSession session) {
+    public ResponseEntity<String> delete(@PathVariable int id, HttpSession session) {
         cardService.deleteCard(id, getLoggedId(session));
-        return "Card is deleted";
+        return ResponseEntity.ok("Card was deleted.");
     }
-
 }

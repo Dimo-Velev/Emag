@@ -3,8 +3,10 @@ package com.example.emag.service;
 import com.example.emag.model.DTOs.ProductImageDTO;
 import com.example.emag.model.entities.Product;
 import com.example.emag.model.entities.ProductImage;
+import com.example.emag.model.entities.Review;
 import com.example.emag.model.exceptions.BadRequestException;
 import com.example.emag.model.exceptions.NotFoundException;
+import jakarta.transaction.Transactional;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,5 +48,26 @@ public class MediaService extends AbstractService{
             return f;
         }
         throw new NotFoundException("File not found");
+    }
+
+    @Transactional
+    public void uploadReviewPicture(MultipartFile file, int id, int userId) {
+        try{
+            Review review = reviewRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new NotFoundException("Review not found"));
+            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+            String name = UUID.randomUUID() + "."+extension;
+            File dir = new File("/uploads");
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+            File reviewPicture = new File(dir, name);
+            Files.copy(file.getInputStream(), reviewPicture.toPath());
+            String url = dir.getName() + File.separator + reviewPicture.getName();
+            review.setPictureUrl(url);
+            reviewRepository.save(review);
+        }
+        catch (IOException e){
+            throw new BadRequestException(e.getMessage());
+        }
     }
 }

@@ -41,11 +41,23 @@ public class OrderService extends AbstractService {
         return mapper.map(order, OrderWithFewInfoDTO.class);
     }
 
+    @Transactional
     public OrderWithFewInfoDTO cancelOrderById(int id, int userId) {
         Order order = findOrderById(id);
         checkIfItsUserOrder(order, userId);
-        order.setStatus(orderStatusRepository.findById(7).orElseThrow(() -> new NotFoundException("This should never happen.")));
+        if (order.getStatus().getId() == 7){
+            throw new BadRequestException("Order already canceled.");
+        }
+        if (order.getStatus().getId() > 3){
+            throw new BadRequestException("You can't cancel the order anymore, because it's on its way to the address or delivered.");
+        }
+        order.setStatus(orderStatusRepository.findById(7).orElseThrow(() -> new NotFoundException("This should never happen, we have them in the DB.")));
         orderRepository.save(order);
+        Set<Product> productList = order.getProductsInOrder().stream()
+                .peek(orderContent -> orderContent.getProduct().setQuantity(orderContent.getProduct().getQuantity()+orderContent.getQuantity()))
+                .map(orderContent -> orderContent.getProduct())
+                .collect(Collectors.toSet());
+        productRepository.saveAll(productList);
         return mapper.map(order, OrderWithFewInfoDTO.class);
     }
 
@@ -91,14 +103,12 @@ public class OrderService extends AbstractService {
         }
         Set<CartContent> productsInCart = user.getProductsInCart();
         checkEachProductQuantityInDB(productsInCart);
-        //productsInCart.forEach(cartContent -> cartContentRepository.deleteById(cartContent.getId()));
         cartContentRepository.deleteAll(productsInCart);
         return productsInCart;
     }
 
     private void checkEachProductQuantityInDB(Set<CartContent> productsInCart) {
         productsInCart.forEach(cartContent -> {
-           // Product product = getProductById(cartContent.getProduct().getId());
             if (cartContent.getProduct().getQuantity() < cartContent.getQuantity()) {
                 throw new BadRequestException("Not enough quantity of " + cartContent.getProduct().getName());
             }
@@ -107,16 +117,15 @@ public class OrderService extends AbstractService {
 
     private Order createNewOrder(Set<CartContent> products, User user, PaymentType paymentType, Address address) {
         Order order = new Order();
-        order.setPrice(calculatePrice(products)); //calculating the price in private method, checking if there is discount per product and summing total price
-        order.setUser(user); // adding user to the order
-        order.setPaymentType(paymentType); // setting payment type, which we have in the DB from the start
-        order.setAddress(address); // setting the address for delivery
-        Set<OrderContent> orderContents = new HashSet<>(); //creating new Set of Order contents that we are going fill up later
+        order.setPrice(calculatePrice(products));
+        order.setUser(user);
+        order.setPaymentType(paymentType);
+        order.setAddress(address);
+        Set<OrderContent> orderContents = new HashSet<>();
         Set<Product> editedQuantityProducts = new HashSet<>();
-        //Setting status to the order, which we have from the beginning in the DB
         order.setStatus(orderStatusRepository.findById(1).orElseThrow(() -> new BadRequestException("This should never happen.")));
         orderRepository.save(order);
-        //Foreach to map cart content to order content
+        order.setId(order.getId());
         products.forEach(cartContent -> {
             OrderContentKey key = new OrderContentKey();
             OrderContent orderContent = new OrderContent();
@@ -126,29 +135,15 @@ public class OrderService extends AbstractService {
             key.setProductId(cartContent.getProduct().getId());
             key.setOrderId(order.getId());
             orderContent.setId(key);
-            //Finding the product IDs to check if every product has enough quantity
             Product product = productRepository.findById(orderContent.getProduct().getId()).orElseThrow(
                     () -> new BadRequestException("Product not found." + orderContent.getProduct().getName()));
             product.setQuantity(product.getQuantity() - orderContent.getQuantity());
-            editedQuantityProducts.add(product); // adding products in set to save them all later in DB
-            orderContents.add(orderContent); //adding the contents of the order to a Set of Order contents that we are going to put to the order
+            editedQuantityProducts.add(product);
+            orderContents.add(orderContent);
         });
-        order.setProductsInOrder(orderContents); // setting the contents to the order
+        order.setProductsInOrder(orderContents);
         productRepository.saveAll(editedQuantityProducts);
         orderContentRepository.saveAll(orderContents);
         return order;
-    }
-
-    private double calculatePrice(Set<CartContent> products) {
-        return products.stream()
-                .mapToDouble(cartContent -> {
-                    double price = cartContent.getProduct().getPrice();
-                    if (cartContent.getProduct().getDiscount() != null) {
-                        double discount = cartContent.getProduct().getDiscount().getDiscountPercent() / 100.0;
-                        price -= price * discount;
-                    }
-                    return price * cartContent.getQuantity();
-                })
-                .sum();
     }
 }

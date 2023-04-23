@@ -43,7 +43,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private Set<OrderContent> productsInOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 

@@ -8,6 +8,9 @@ import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
 import com.example.emag.model.repositories.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,31 +29,34 @@ public class ReviewService extends AbstractService {
         review.setUser(getUserById(userId));
         review.setProduct(product);
         reviewRepository.save(review);
+        review.setPictureUrl("No picture yet.");
         return mapper.map(review, ReviewWithFewInfoDTO.class);
     }
 
-    public List<ReviewWithoutPicDTO> viewAllReviewsForProduct(int id, String rating, String sort) {
+    public Page<ReviewWithoutPicDTO> viewAllReviewsForProduct(int id, String rating, String sort,Pageable pageable) {
         Product product = getProductById(id);
         List<Review> reviews = product.getReviews();
-        if (!rating.isEmpty()) {
+        if (rating != null && !rating.isEmpty()) {
             reviews = reviews.stream()
                     .filter(reviewWithoutPicDTO -> reviewWithoutPicDTO.getRating() == Integer.parseInt(rating))
                     .toList();
         }
-        if (sort.equals("most-Popular")) {
+        if (sort != null && sort.equals("most-Popular")) {
             reviews = reviews.stream()
                     .sorted((r1, r2) -> r2.getLikedBy().size() - r1.getLikedBy().size())
                     .toList();
         }
-        if (sort.equals("newest")) {
+        if (sort != null && sort.equals("newest")) {
             reviews = reviews.stream()
                     .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
                     .toList();
         }
-        return reviews.stream()
+        return new PageImpl<>(reviews.stream()
                 .filter(review -> review.getIsApproved() == 1)
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .map(review -> mapper.map(review, ReviewWithoutPicDTO.class))
-                .toList();
+                .toList(),pageable,reviews.size());
     }
 
     public List<ReviewWithoutPicAllDTO> viewAllOwnReviews(int id) {
@@ -70,7 +76,7 @@ public class ReviewService extends AbstractService {
     }
 
     public LikedReviewDTO reactOnReview(int id, int userId) {
-        Review review = reviewRepository.findById(id).orElseThrow(() -> new NotFoundException("Review not found."));
+        Review review = reviewRepository.findByIdAndIsApprovedTrue(id).orElseThrow(() -> new NotFoundException("Review not found or not approved yet."));
         User user = getUserById(userId);
         Set<Review> likesList = user.getLikes();
         LikedReviewDTO dto = mapper.map(review, LikedReviewDTO.class);
@@ -98,6 +104,10 @@ public class ReviewService extends AbstractService {
         Review review = getReviewById(id);
         review.setIsApproved(1);
         reviewRepository.save(review);
+    }
+    public Page<ReviewWithoutPicAllDTO> getAllUnapprovedReviews(Pageable pageable) {
+        Page<Review> unapprovedReviews = reviewRepository.findByIsApprovedFalse(pageable);
+        return unapprovedReviews.map(unapprovedReview-> mapper.map(unapprovedReview, ReviewWithoutPicAllDTO.class));
     }
 }
 

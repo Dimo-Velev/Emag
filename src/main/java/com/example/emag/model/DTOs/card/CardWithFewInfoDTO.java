@@ -10,9 +10,10 @@ import lombok.Setter;
 public class CardWithFewInfoDTO {
 
     private int id;
-    private String maskedCardNumber;
-    private int expireMonth;
-    private int expireYear;
+    private String cardNumber;
+    private String expireMonth;
+    private String expireYear;
     private String name;
+    private String cvv;
 
 }

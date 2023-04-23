@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -32,6 +33,8 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Review> reviews;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private Set<CartContent> productInCarts;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

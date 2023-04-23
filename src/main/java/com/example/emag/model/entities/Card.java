@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.Year;
-
 @Setter
 @Getter
 @Entity
@@ -25,10 +22,10 @@ public class Card {
     private String cardNumber;
 
     @Column
-    private int expireMonth;
+    private String expireMonth;
 
     @Column
-    private int expireYear;
+    private String expireYear;
 
     @Column
     private String cvvCode;

@@ -19,5 +19,4 @@ public class ReviewWithoutPicDTO {
     private String text;
     private LocalDateTime createdAt;
     private UserWithFewInfo user;
-    private ProductViewDTO product;
 }

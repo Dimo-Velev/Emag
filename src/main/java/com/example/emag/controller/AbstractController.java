@@ -3,6 +3,7 @@ package com.example.emag.controller;
 import com.example.emag.model.DTOs.ErrorDTO;
 import com.example.emag.model.exceptions.*;
 import com.example.emag.service.MediaService;
+import com.example.emag.service.ReviewService;
 import com.example.emag.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public abstract class AbstractController {
     protected MediaService mediaService;
     @Autowired
     protected UserService userService;
+    @Autowired
+    protected ReviewService reviewService;
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleBadRequest(Exception e) {
@@ -48,7 +51,6 @@ public abstract class AbstractController {
     public ErrorDTO handleRest(Exception e) {
         return generateErrorDTO(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
     private ErrorDTO generateErrorDTO(Exception e, HttpStatus s) {
         return ErrorDTO.builder()
@@ -100,8 +102,9 @@ public abstract class AbstractController {
                 .build();
     }
 
-    protected boolean isLoggedAdmin(HttpSession session) {
-        userService.isAdmin(getLoggedId(session));
-        return false;
+    protected void isLoggedAdmin(HttpSession session) {
+      if(!userService.isAdmin(getLoggedId(session))){
+          throw new UnauthorizedException("Access denied.");
+      }
     }
 }

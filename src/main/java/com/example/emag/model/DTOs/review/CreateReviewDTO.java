@@ -4,7 +4,6 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
@@ -21,6 +20,5 @@ public class CreateReviewDTO {
     private String headline;
     @NotNull(message = "Review text is required.")
     private String text;
-    private MultipartFile picture;
 
 }

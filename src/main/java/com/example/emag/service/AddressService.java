@@ -1,6 +1,7 @@
 package com.example.emag.service;
 
 import com.example.emag.model.DTOs.address.AddressDTO;
+import com.example.emag.model.DTOs.address.AddressIdDTO;
 import com.example.emag.model.entities.Address;
 import com.example.emag.model.exceptions.NotFoundException;
 import com.example.emag.model.exceptions.UnauthorizedException;
@@ -17,14 +18,14 @@ public class AddressService extends AbstractService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public AddressDTO addAddress(AddressDTO dto, int id) {
+    public AddressIdDTO addAddress(AddressDTO dto, int id) {
         Address address = mapper.map(dto, Address.class);
         address.setUser(getUserById(id));
         addressRepository.save(address);
-        return dto;
+        return mapper.map(address,AddressIdDTO.class);
     }
 
-    public AddressDTO editAddress(AddressDTO dto, int id, int userId) {
+    public AddressIdDTO editAddress(AddressDTO dto, int id, int userId) {
         Address address = addressRepository.findByIdAndUserId(id,userId).orElseThrow(() -> new NotFoundException("Address not found"));
         if (!dto.getName().equals(address.getName())) {
             address.setAddress(dto.getAddress());
@@ -42,27 +43,30 @@ public class AddressService extends AbstractService {
             address.setFloor(Integer.parseInt(dto.getFloor()));
         }
         addressRepository.save(address);
-        return dto;
+        return mapper.map(address,AddressIdDTO.class);
 
     }
 
-    public List<AddressDTO> getAllAddresses(int id) {
+    public List<AddressIdDTO> getAllAddresses(int id) {
+        List<Address> addressList = addressRepository.findAllByUserId(id);
+        if (addressList.isEmpty()){
+            throw new NotFoundException("No addresses found.");
+        }
         return addressRepository.findAllByUserId(id)
                 .stream()
-                .map(address -> mapper.map(address, AddressDTO.class))
+                .map(address -> mapper.map(address, AddressIdDTO.class))
                 .collect(Collectors.toList());
     }
 
-    public AddressDTO getAddress(int id, int userId) {
+    public AddressIdDTO  getAddress(int id, int userId) {
         Address address = getAddressById(id);
         checkIfItsUserAddress(address, userId);
-        return mapper.map(address, AddressDTO.class);
+        return mapper.map(address, AddressIdDTO.class);
     }
 
-    public String deleteAddress(int id, int userId) {
+    public void deleteAddress(int id, int userId) {
         checkIfItsUserAddress(getAddressById(id), userId);
         addressRepository.deleteById(id);
-        return "Address was deleted.";
     }
 
     private Address getAddressById(int id) {

@@ -24,22 +24,11 @@ public class CartService extends AbstractService {
         if (cart.isEmpty()) {
             throw new BadRequestException("Cart is empty");
         }
-        double totalPrice = 0.0;
-        for (CartContent cartContent : cart) {
-            totalPrice += cartContent.getProduct().getPrice() * cartContent.getQuantity();
-        }
         List<ProductInCartDTO> cartContentDTOS = cart.stream()
-                .map(cartContent -> {
-                    ProductInCartDTO product = new ProductInCartDTO();
-                    product.setName(cartContent.getProduct().getName());
-                    product.setDiscount(cartContent.getProduct().getDiscount().getDiscountPercent());
-                    product.setQuantity(cartContent.getQuantity());
-                    product.setPrice(cartContent.getProduct().getPrice());
-                    return product;
-                })
+                .map(cartContent -> mapper.map(cartContent.getProduct(),ProductInCartDTO.class))
                 .toList();
         CartContentDTO dto = new CartContentDTO();
-        dto.setTotalPrice(totalPrice);
+        dto.setTotalPrice(calculatePrice(cart));
         dto.setProducts(cartContentDTOS);
         return dto;
     }
@@ -78,6 +67,7 @@ public class CartService extends AbstractService {
         }
         cartContent.setQuantity(dto.getQuantity());
         ProductInCartDTO product = new ProductInCartDTO();
+        product.setId(cartContent.getProduct().getId());
         product.setPrice((cartContent.getProduct().getId()));
         product.setName(cartContent.getProduct().getName());
         product.setQuantity(dto.getQuantity());
@@ -118,6 +108,7 @@ public class CartService extends AbstractService {
 
     private ProductInCartDTO createDTO(CartContent cartContent) {
         ProductInCartDTO dto = new ProductInCartDTO();
+        dto.setId(cartContent.getProduct().getId());
         dto.setName(cartContent.getProduct().getName());
         dto.setQuantity(cartContent.getQuantity());
         dto.setPrice(cartContent.getProduct().getPrice());

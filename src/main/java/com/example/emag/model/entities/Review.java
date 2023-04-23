@@ -40,7 +40,7 @@ public class Review {
     @Column
     private int isApproved;
     @ManyToMany(mappedBy = "likes", fetch = FetchType.LAZY)
-    private Set<User> likedBy = new HashSet<>();
+    private Set<User> likedBy;
 
     @Override
     public boolean equals(Object o) {

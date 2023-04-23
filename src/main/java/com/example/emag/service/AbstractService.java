@@ -7,6 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 
 @Service
 public abstract class AbstractService {
@@ -36,10 +38,12 @@ public abstract class AbstractService {
     protected Category getCategoryById(int id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Parent category not found"));
     }
+
     protected User getUserById(int id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
     }
-    protected Discount getDiscountById(int id){
+
+    protected Discount getDiscountById(int id) {
         return discountRepository.findById(id).orElseThrow(() -> new NotFoundException("Discount not found"));
 
     }
@@ -47,7 +51,21 @@ public abstract class AbstractService {
     protected Product getProductById(int id) {
         return productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found."));
     }
-    protected Review getReviewById(int id){
-       return reviewRepository.findById(id).orElseThrow(() -> new NotFoundException("Review not found."));
+
+    protected Review getReviewById(int id) {
+        return reviewRepository.findById(id).orElseThrow(() -> new NotFoundException("Review not found."));
+    }
+
+    protected double calculatePrice(Set<CartContent> products) {
+        return products.stream()
+                .mapToDouble(cartContent -> {
+                    double price = cartContent.getProduct().getPrice();
+                    if (cartContent.getProduct().getDiscount() != null) {
+                        double discount = cartContent.getProduct().getDiscount().getDiscountPercent() / 100.0;
+                        price -= price * discount;
+                    }
+                    return price * cartContent.getQuantity();
+                })
+                .sum();
     }
 }
