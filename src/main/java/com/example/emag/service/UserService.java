@@ -40,7 +40,7 @@ public class UserService extends AbstractService {
         if (!encoder.matches(dto.getPassword(), u.getPassword())) {
             throw new BadRequestException("You have provided invalid password for authentication");
         }
-        if (!encoder.matches(dto.getNewPassword(), dto.getConfirmNewPassword())) {
+        if (!dto.getNewPassword().equals(dto.getConfirmNewPassword())) {
             throw new BadRequestException("Passwords must match!");
         }
         u.setPassword(encoder.encode(dto.getConfirmNewPassword()));
@@ -83,10 +83,11 @@ public class UserService extends AbstractService {
         userRepository.save(u);
     }
 
-    public void editSubscription(int loggedId) {
+    public String editSubscription(int loggedId) {
         User u = getUserById(loggedId);
         u.setSubscribed(!u.isSubscribed());
         userRepository.save(u);
+        return (u.isSubscribed()) ? "User subscribed" : "User unsubscribed";
     }
 
     public Page<ProductViewDTO> viewUserHistory(int userId, Pageable pageable) {

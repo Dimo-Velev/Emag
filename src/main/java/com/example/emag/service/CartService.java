@@ -63,7 +63,7 @@ public class CartService extends AbstractService {
                 () -> new BadRequestException("That products is not in your cart."));
         Product productInDb = getProductById(id);
         if (productInDb.getQuantity() < dto.getQuantity()) {
-            throw new NotFoundException("We don't have that much quantity in of that product.");
+            throw new NotFoundException("We don't have that much quantity in stock of that product.");
         }
         cartContent.setQuantity(dto.getQuantity());
         ProductInCartDTO product = new ProductInCartDTO();

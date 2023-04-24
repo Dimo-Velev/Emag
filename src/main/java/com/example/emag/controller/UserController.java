@@ -57,8 +57,9 @@ public class UserController extends AbstractController{
     }
 
     @PutMapping("/subscription")
-    public void editSubscription(HttpSession s){
-        userService.editSubscription(getLoggedId(s));
+    public ResponseEntity<String> editSubscription(HttpSession s){
+         String result = userService.editSubscription(getLoggedId(s));
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/users/{id:\\d+}/admin/")

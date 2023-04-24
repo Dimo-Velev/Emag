@@ -48,19 +48,19 @@ public class FavoritesService extends AbstractService {
         userRepository.save(user);
         ProductReactDTO dto = mapper.map(product, ProductReactDTO.class);
         dto.setMessage(message);
-        Optional<Integer> rating = product.getReviews().stream()
-                .map(review -> review.getRating())
-                .reduce((rating1, total) -> rating1 + total);
-        rating.ifPresent(integer -> dto.setRating(rating.get()));
+        dto.setRating(calculateRating(product));
         dto.setDiscountPercentage(product.getDiscount().getDiscountPercent());
         return dto;
     }
 
     private double calculateRating(Product p){
-       double totalRating = p.getReviews().stream()
-                .mapToDouble(value -> value.getRating())
-                .sum();
-       return totalRating/p.getReviews().size();
+        if (!p.getReviews().isEmpty()) {
+            double totalRating = p.getReviews().stream()
+                    .mapToDouble(value -> value.getRating())
+                    .sum();
+            return totalRating / p.getReviews().size();
+        }
+        return 0.0;
     }
 
 }
